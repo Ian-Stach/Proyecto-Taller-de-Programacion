@@ -1,0 +1,56 @@
+.navbar-short {
+    min-height: 20px;
+    padding: 2px 0;
+}
+
+.navbar-short .nav-link,.navbar-short .btn {
+    font-size: 0.675rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.navbar-tall {
+    min-height: 80px;
+    padding: 20px 0;
+}
+
+.dropdown-toggle-custom:hover {
+    border: 2px solid black !important;
+}
+
+.dropdown-toggle-custom::after {
+    content: '▼';
+    border: none;
+    margin-left: 8px;
+    font-size: 0.6rem;
+}
+
+.scale-effect-icon {
+    overflow: visible;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    transform-origin: center;
+    gap: 5px;
+}
+
+.scale-effect-icon svg {
+    transform-origin: center;
+}
+
+.scale-effect-icon:hover {
+    transform: scale(1.3);
+}
+
+.scale-effect-icon:hover .heart-path {
+    fill: #ff0000;
+    stroke: #ff0000;
+}
+
+@font-face {
+    font-family: 'Caesar Dressing';
+    src: url('/fonts/CaesarDressing-Regular.ttf') format('truetype');
+}
+.navbar-brand-custom {
+    font-family: 'Caesar Dressing', serif;
+}
