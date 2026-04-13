@@ -29,4 +29,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relación: Un usuario tiene muchas órdenes
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    // Relación: Un usuario tiene muchos favoritos
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }
