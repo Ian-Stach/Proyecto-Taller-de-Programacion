@@ -11,13 +11,8 @@ use App\Http\Controllers\ContactController;
 // 🟢 RUTAS PÚBLICAS (Acceso para todos)
 // ============================================================================
 
-Route::get('/', function () {
-    return view('Principal');
-})->name('home');
-
-Route::get('/Principal', function () {
-    return view('Principal');
-})->name('principal');
+Route::view('/', 'principal')->name('home');
+Route::view('/principal', 'principal')->name('principal');
 
 // Páginas estáticas
 Route::get('/about', function () {
