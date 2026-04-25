@@ -18,17 +18,16 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Auth::user()->orders()
+            ->with('orderItems')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        $categories = \App\Models\Category::all();
-
-        return view('orders.index', compact('orders', 'categories'));
+        return view('orders.index', compact('orders'));
     }
 
     /**
      * Mostrar detalle de una orden
-     * GET /orders/{id}
+     * GET /orders/{order}
      */
     public function show(Order $order)
     {
@@ -37,9 +36,8 @@ class OrderController extends Controller
             abort(403, 'No autorizado');
         }
 
-        $categories = \App\Models\Category::all();
-
-        return view('orders.show', compact('order', 'categories'));
+        $order->load('orderItems.product');
+        return view('orders.show', compact('order'));
     }
 
     /**
@@ -58,12 +56,34 @@ class OrderController extends Controller
         try {
             DB::beginTransaction();
 
-            // Calcular total
-            $total = 0;
+            // Obtener todos los productos de una vez (evitar N queries)
+            $products = Product::whereIn('id', array_keys($cart))->get()->keyBy('id');
+            
+            $subtotal = 0;
+            $orderItems = [];
+
+            // Validar stock y calcular total
             foreach ($cart as $productId => $quantity) {
-                $product = Product::findOrFail($productId);
-                $total += $product->price * $quantity;
+                $product = $products[$productId] ?? null;
+                
+                if (!$product) {
+                    throw new \Exception("Producto {$productId} no encontrado");
+                }
+
+                if ($product->stock < $quantity) {
+                    throw new \Exception("Stock insuficiente para {$product->name}");
+                }
+
+                $subtotal += $product->price * $quantity;
+                $orderItems[] = [
+                    'product' => $product,
+                    'quantity' => $quantity,
+                    'unit_price' => $product->price
+                ];
             }
+
+            $tax = round($subtotal * 0.1, 2);
+            $total = round($subtotal + $tax, 2);
 
             // Crear orden
             $order = Order::create([
@@ -72,25 +92,16 @@ class OrderController extends Controller
                 'status' => 'pending'
             ]);
 
-            // Crear items de la orden
-            foreach ($cart as $productId => $quantity) {
-                $product = Product::findOrFail($productId);
-
-                // Validar stock suficiente
-                if ($product->stock < $quantity) {
-                    throw new \Exception("Stock insuficiente para {$product->name}");
-                }
-
-                // Crear item de orden
+            // Crear items y reducir stock
+            foreach ($orderItems as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'product_id' => $productId,
-                    'quantity' => $quantity,
-                    'unit_price' => $product->price
+                    'product_id' => $item['product']->id,
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price']
                 ]);
 
-                // Reducir stock
-                $product->decrement('stock', $quantity);
+                $item['product']->decrement('stock', $item['quantity']);
             }
 
             DB::commit();

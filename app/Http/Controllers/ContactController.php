@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
@@ -31,9 +32,8 @@ class ContactController extends Controller
             'agree' => 'accepted',
         ]);
 
-        // Aquí se podría guardar en BD o enviar email
-        // Por ahora solo mostramos mensaje de éxito
-        
+        // Guardar en BD
+        Contact::create($validated);
         \Log::info('Contacto recibido', $validated);
 
         return redirect()->route('contact')

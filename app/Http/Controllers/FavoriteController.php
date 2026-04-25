@@ -11,7 +11,7 @@ class FavoriteController extends Controller
 {
     /**
      * Agregar producto a favoritos
-     * POST /favorites/{product_id}
+     * POST /favorites/{product}
      */
     public function store(Product $product)
     {
@@ -35,7 +35,7 @@ class FavoriteController extends Controller
 
     /**
      * Remover producto de favoritos
-     * DELETE /favorites/{product_id}
+     * DELETE /favorites/{product}
      */
     public function destroy(Product $product)
     {
@@ -48,16 +48,14 @@ class FavoriteController extends Controller
 
     /**
      * Listar favoritos del usuario
-     * GET /favorites (opcional)
+     * GET /favorites
      */
     public function index()
     {
         $favorites = Auth::user()->favorites()
-            ->with('product')
+            ->with('product.categories')
             ->paginate(12);
 
-        $categories = \App\Models\Category::all();
-
-        return view('favorites.index', compact('favorites', 'categories'));
+        return view('favorites.index', compact('favorites'));
     }
 }

@@ -6,30 +6,26 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ProfileController;
 
 // ============================================================================
 // 🟢 RUTAS PÚBLICAS (Acceso para todos)
 // ============================================================================
 
+// Páginas estáticas
 Route::view('/', 'principal')->name('home');
 Route::view('/principal', 'principal')->name('principal');
-
-// Páginas estáticas
-Route::get('/about', function () {
-    return view('about');
-})->name('about');
-
-Route::get('/shipping', function () {
-    return view('shipping');
-})->name('shipping');
-
-Route::get('/terms', function () {
-    return view('terms');
-})->name('terms');
+Route::view('/about', 'about')->name('about');
+Route::view('/shipping', 'shipping')->name('shipping');
+Route::view('/terms', 'terms')->name('terms');
 
 // Contacto (dinámica)
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:20,1')->name('contact.store');
+
+// Rutas de productos (dinámicas)
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
 // ============================================================================
 // 🟡 RUTAS DE AUTENTICACIÓN (Importadas desde auth.php)
@@ -46,50 +42,19 @@ require __DIR__.'/auth.php';
 // ============================================================================
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Dashboard
+    Route::view('/dashboard', 'dashboard')->name('dashboard');
 
-    // Rutas de perfil (requeridas por Breeze)
-    Route::get('/profile', function () {
-        return view('profile.edit', ['user' => Auth::user()]);
-    })->name('profile.edit');
-
-    Route::post('/profile', function () {
-        return redirect()->route('profile.edit');
-    })->name('profile.update');
-
-    Route::delete('/profile', function () {
-        return redirect()->route('profile.edit');
-    })->name('profile.destroy');
-});
-
-// ============================================================================
-// 🔴 RUTAS PROTEGIDAS + VERIFICADAS (Middleware: auth + verified)
-// - Solo usuarios CON login + email verificado
-// - Usuarios sin verificación → Redirige a /email/verify
-// - ESTAS SE AGREGARÁN EN PASO 4:
-//   - GET  /products             → Lista de productos
-//   - GET  /products/{id}        → Detalle producto
-//   - GET  /cart                 → Ver carrito
-//   - POST /cart                 → Agregar al carrito
-//   - DELETE /cart/{item}        → Eliminar del carrito
-//   - GET  /orders               → Mis órdenes
-//   - GET  /orders/{id}          → Detalle orden
-//   - POST /checkout             → Procesar pago
-//   - POST /favorites/{product}  → Agregar favorito
-//   - DELETE /favorites/{product} → Eliminar favorito
-// ============================================================================
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    // RUTAS DE PRODUCTOS
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-    Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+    // Rutas de perfil
+    Route::view('/user', 'profile.user')->name('user');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // RUTAS DE CARRITO
     Route::get('/cart', [CartController::class, 'index'])->name('cart.show');
-    Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
-    Route::delete('/cart/{product_id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/{product}', [CartController::class, 'add'])->name('cart.add');
+    Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.remove');
 
     // RUTAS DE ÓRDENES
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
@@ -97,7 +62,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
 
     // RUTAS DE FAVORITOS
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/favorites/{product}', [FavoriteController::class, 'store'])->name('favorites.add');
     Route::delete('/favorites/{product}', [FavoriteController::class, 'destroy'])->name('favorites.remove');
-    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
 });
+

@@ -4,7 +4,7 @@
 <div class="container my-5">
     <div class="row mb-5">
         <div class="col-md-12">
-            <h1 class="display-4 mb-4" style="color: #FFD700;">📦 Comercialización</h1>
+            <h1 class="display-4 mb-4 static-page-title">📦 Comercialización</h1>
             <p class="lead">Información completa sobre entregas, envíos y formas de pago</p>
             <hr class="mb-5">
         </div>

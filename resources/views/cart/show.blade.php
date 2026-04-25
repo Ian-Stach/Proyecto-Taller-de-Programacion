@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container my-5">
-    <h1 class="mb-4">🛒 Shopping Cart</h1>
+    <h1 class="mb-4">🛒 Carrito de compras</h1>
 
     @if($errors->any())
         <div class="alert alert-danger">
@@ -15,11 +15,11 @@
             <table class="table table-hover">
                 <thead class="table-warning">
                     <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
                         <th>Subtotal</th>
-                        <th>Action</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,10 +32,10 @@
                             <td>{{ $item['quantity'] }}</td>
                             <td class="fw-bold text-warning">${{ number_format($item['subtotal'], 2) }}</td>
                             <td>
-                                <form action="{{ route('cart.remove', $item['product']->id) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('cart.remove', $item['product']->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
                                 </form>
                             </td>
                         </tr>
@@ -50,13 +50,13 @@
             <div class="col-md-4">
                 <div class="card bg-light">
                     <div class="card-body">
-                        <h5 class="card-title">Order Summary</h5>
+                        <h5 class="card-title">Resumen del Pedido</h5>
                         <div class="d-flex justify-content-between mb-3">
                             <strong>Subtotal:</strong>
                             <span>${{ number_format($total, 2) }}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
-                            <strong>Tax (10%):</strong>
+                            <strong>Impuesto (10%):</strong>
                             <span>${{ number_format($total * 0.10, 2) }}</span>
                         </div>
                         <hr>
@@ -70,21 +70,21 @@
                 <form action="{{ route('checkout.store') }}" method="POST" class="mt-3">
                     @csrf
                     <button type="submit" class="btn btn-warning btn-lg w-100">
-                        💳 Proceed to Checkout
+                        💳 Proceder al pago
                     </button>
                 </form>
 
                 <a href="{{ route('products.index') }}" class="btn btn-secondary w-100 mt-2">
-                    Continue Shopping
+                    Seguir comprando
                 </a>
             </div>
         </div>
     @else
         <div class="alert alert-info text-center py-5">
-            <h4>Your cart is empty</h4>
-            <p class="mb-3">Start shopping to add items to your cart!</p>
+            <h4>Tu carrito está vacío</h4>
+            <p class="mb-3">¡Comienza a comprar para agregar artículos a tu carrito!</p>
             <a href="{{ route('products.index') }}" class="btn btn-warning btn-lg">
-                🦕 Shop Now
+                🦕 Comprar Ahora
             </a>
         </div>
     @endif

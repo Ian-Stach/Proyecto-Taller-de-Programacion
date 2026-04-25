@@ -4,7 +4,7 @@
 <div class="container my-5">
     <div class="row mb-5">
         <div class="col-md-12">
-            <h1 class="display-4 mb-4" style="color: #FFD700;">⚖️ Términos y Usos</h1>
+            <h1 class="display-4 mb-4 static-page-title">⚖️ Términos y Usos</h1>
             <p class="lead">Aviso Legal y Políticas de Servicio</p>
             <hr class="mb-5">
         </div>
@@ -122,7 +122,7 @@
 
             <h5>3.3 Servicio Técnico 24/7</h5>
             <p>
-                Ofrecemos soporte técnico y veterinario 24 horas, 7 días a la semana. Llama ao nuestro equipo de expertos para cualquier pregunta o preocupación 
+                Ofrecemos soporte técnico y veterinario 24 horas, 7 días a la semana. Llama a nuestro equipo de expertos para cualquier pregunta o preocupación 
                 sobre el cuidado y bienestar de tu dinosaurio.
             </p>
 
