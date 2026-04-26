@@ -30,11 +30,11 @@
                     >Jurassic Store</a>
                 </div>
 
-                <ul class="nav justify-content-end">
+                <ul class="nav justify-content-end align-items-center">
                     @auth
                         <!-- favorites -->
                         <li class="nav-item">
-                            <a class="nav-link scale-effect-icon"
+                                     <a class="nav-link scale-effect-icon header-utility-icon"
                                href="{{ route('favorites.index') }}"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +51,7 @@
                     
                         <!-- cart -->
                         <li class="nav-item">
-                            <button class="nav-link scale-effect-icon btn btn-link"
+                                <button class="nav-link scale-effect-icon btn btn-link header-utility-icon"
                                     type="button"
                                     data-bs-toggle="offcanvas"
                                     data-bs-target="#carritoSidebar"
@@ -71,22 +71,22 @@
 
                     <!-- profile -->
                     @auth
-                        <!-- USUARIO AUTENTICADO -->
-                        <li class="nav-item user-badge">
-                            👤 {{ Auth::user()->name }}
-                        </li>
+                        <!-- ACCESO A CUENTA CON AVATAR -->
                         <li class="nav-item">
-                            <form method="POST"
-                                  action="{{ route('logout') }}"
-                                  class="d-inline"
+                            <a class="nav-link user-account-link text-decoration-none"
+                               href="{{ route('user') }}"
+                               aria-label="Abrir mi cuenta"
                             >
-                                @csrf
-                                <button type="submit"
-                                        class="nav-link btn btn-link logout-button"
-                                >
-                                    🚪 Cerrar sesión
-                                </button>
-                            </form>
+                                <span class="user-account-summary">
+                                    <span class="user-account-meta">
+                                        <span class="user-account-name">{{ Auth::user()->name }}</span>
+                                        <span class="user-account-email">{{ Auth::user()->email }}</span>
+                                    </span>
+                                    <span class="user-account-avatar">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </span>
+                                </span>
+                            </a>
                         </li>
                     @else
                         <!-- USUARIO NO AUTENTICADO -->
@@ -109,7 +109,12 @@
                         </li>
                         <span class="nav-link">|</span>
                         <li class="nav-item">
-                            <a class="nav-link scale-effect-icon" href="{{ route('register') }}">Registrarse</a>
+                            <button class="nav-link scale-effect-icon border-0 bg-transparent"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#registerModal"
+                            >Registrarse
+                            </button>
                         </li>
                     @endauth
                 </ul>
@@ -220,8 +225,9 @@
             </div>
         </footer>
 
+        <!-- MODAL DE LOGIN -->
         @guest
-            <div class="modal fade"
+            <div class="modal fade auth-modal"
                  id="loginModal"
                  tabindex="-1"
                  aria-labelledby="loginModalLabel"
@@ -299,10 +305,12 @@
                                 </div>
 
                                 @if (Route::has('password.request'))
-                                    <a class="link-dark"
-                                       href="{{ route('password.request') }}"
+                                    <button type="button"
+                                            class="btn btn-link link-dark p-0 text-decoration-none"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#forgotPasswordModal"
                                     >¿Olvidaste tu contraseña?
-                                    </a>
+                                    </button>
                                 @endif
                             </div>
 
@@ -338,6 +346,263 @@
             @endif
         @endguest
 
+        <!-- MODAL DE REGISTRO -->
+        @guest
+            <div class="modal fade auth-modal"
+                 id="registerModal"
+                 tabindex="-1"
+                 aria-labelledby="registerModalLabel"
+                 aria-hidden="true"
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <h5 class="modal-title"
+                                id="registerModalLabel"
+                            >Crear cuenta
+                            </h5>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Cerrar"
+                            ></button>
+                        </div>
+
+                        <form method="POST"
+                              action="{{ route('register') }}"
+                        >
+                            @csrf
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="register-name"
+                                           class="form-label"
+                                    >Nombre
+                                    </label>
+                                    <input id="register-name"
+                                           type="text"
+                                           name="name"
+                                           value="{{ old('name') }}"
+                                           class="form-control @error('name', 'register') is-invalid @enderror"
+                                           required
+                                           autocomplete="name"
+                                    >
+                                    @error('name', 'register')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="register-email"
+                                           class="form-label"
+                                    >Email
+                                    </label>
+                                    <input id="register-email"
+                                           type="email"
+                                           name="email"
+                                           value="{{ old('email') }}"
+                                           class="form-control @error('email', 'register') is-invalid @enderror"
+                                           required
+                                           autocomplete="email"
+                                    >
+                                    @error('email', 'register')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="register-password"
+                                           class="form-label"
+                                    >Contraseña
+                                    </label>
+                                    <input id="register-password"
+                                           type="password"
+                                           name="password"
+                                           class="form-control @error('password', 'register') is-invalid @enderror"
+                                           required
+                                           autocomplete="new-password"
+                                    >
+                                    @error('password', 'register')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="register-password-confirmation"
+                                           class="form-label"
+                                    >Confirmar contraseña
+                                    </label>
+                                    <input id="register-password-confirmation"
+                                           type="password"
+                                           name="password_confirmation"
+                                           class="form-control @error('password_confirmation', 'register') is-invalid @enderror"
+                                           required
+                                           autocomplete="new-password"
+                                    >
+                                    @error('password_confirmation', 'register')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button"
+                                        class="btn btn-secondary"
+                                        data-bs-dismiss="modal"
+                                >Cerrar
+                                </button>
+                                <button type="submit"
+                                        class="btn btn-warning"
+                                >Registrarse
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endguest
+        @guest
+            @if ($errors->register->isNotEmpty())
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const registerModalElement = document.getElementById('registerModal');
+
+                        if (registerModalElement) {
+                            const registerModal = new bootstrap.Modal(registerModalElement);
+                            registerModal.show();
+                        }
+                    });
+                </script>
+            @endif
+        @endguest
+
+        <!-- MODAL DE RECUPERACION DE CONTRASENA -->
+        @guest
+            <div class="modal fade auth-modal"
+                 id="forgotPasswordModal"
+                 tabindex="-1"
+                 aria-labelledby="forgotPasswordModalLabel"
+                 aria-hidden="true"
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <h5 class="modal-title"
+                                id="forgotPasswordModalLabel"
+                            >Recuperar contraseña
+                            </h5>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Cerrar"
+                            ></button>
+                        </div>
+
+                        <form method="POST"
+                              action="{{ route('password.email') }}"
+                        >
+                            @csrf
+                            <div class="modal-body">
+                                <p class="text-muted mb-3">
+                                    Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña.
+                                </p>
+
+                                @if(session('forgotPasswordStatus'))
+                                    <div class="alert alert-success">{{ session('forgotPasswordStatus') }}</div>
+                                @endif
+
+                                <div class="mb-3">
+                                    <label for="forgot-password-email"
+                                           class="form-label"
+                                    >Email
+                                    </label>
+                                    <input id="forgot-password-email"
+                                           type="email"
+                                           name="email"
+                                           value="{{ old('email') }}"
+                                           class="form-control @error('email', 'forgotPassword') is-invalid @enderror"
+                                           required
+                                           autocomplete="username"
+                                    >
+                                    @error('email', 'forgotPassword')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="modal-footer justify-content-between">
+                                <button type="button"
+                                        class="btn btn-link link-dark p-0 text-decoration-none"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#loginModal"
+                                >Volver al login</button>
+                                <div class="d-flex gap-2">
+                                    <button type="button"
+                                            class="btn btn-secondary"
+                                            data-bs-dismiss="modal"
+                                    >Cerrar</button>
+                                    <button type="submit"
+                                            class="btn btn-warning"
+                                    >Enviar enlace</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endguest
+
+        @guest
+            @if ($errors->forgotPassword->isNotEmpty() || session('forgotPasswordStatus'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const forgotPasswordModalElement = document.getElementById('forgotPasswordModal');
+
+                        if (forgotPasswordModalElement) {
+                            const forgotPasswordModal = new bootstrap.Modal(forgotPasswordModalElement);
+                            forgotPasswordModal.show();
+                        }
+                    });
+                </script>
+            @endif
+        @endguest
+
+        @guest
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const modalQueryMap = {
+                        login: 'loginModal',
+                        register: 'registerModal',
+                        'forgot-password': 'forgotPasswordModal',
+                    };
+                    const searchParams = new URLSearchParams(window.location.search);
+                    const modalKey = searchParams.get('authModal');
+                    const modalId = modalKey ? modalQueryMap[modalKey] : null;
+
+                    if (!modalId) {
+                        return;
+                    }
+
+                    const modalElement = document.getElementById(modalId);
+
+                    if (!modalElement) {
+                        return;
+                    }
+
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+
+                    searchParams.delete('authModal');
+
+                    const nextQuery = searchParams.toString();
+                    const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ''}${window.location.hash}`;
+
+                    window.history.replaceState({}, '', nextUrl);
+                });
+            </script>
+        @endguest
+
+
+                                           
         <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     </body>
 </html>

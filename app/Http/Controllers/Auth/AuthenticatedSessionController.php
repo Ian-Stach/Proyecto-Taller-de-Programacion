@@ -7,16 +7,15 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Redirect to home and request the login modal.
      */
-    public function create(): View
+    public function create(): RedirectResponse
     {
-        return view('auth.login');
+        return $this->redirectToAuthModal('login');
     }
 
     /**
@@ -28,7 +27,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended($this->resolvePreviousAppUrl());
     }
 
     /**

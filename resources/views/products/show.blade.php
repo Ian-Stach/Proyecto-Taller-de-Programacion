@@ -79,7 +79,11 @@
                         <div class="alert alert-info">
                             Inicia sesión para agregar este producto al carrito.
                         </div>
-                        <a href="{{ route('login') }}" class="btn btn-warning btn-lg">Iniciar sesión para comprar</a>
+                        <button type="button"
+                                class="btn btn-warning btn-lg"
+                                data-bs-toggle="modal"
+                                data-bs-target="#loginModal"
+                        >Iniciar sesión para comprar</button>
                 @endauth
             @else
                 <div class="alert alert-danger">

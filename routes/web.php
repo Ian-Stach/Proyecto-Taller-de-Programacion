@@ -42,11 +42,8 @@ require __DIR__.'/auth.php';
 // ============================================================================
 
 Route::middleware('auth')->group(function () {
-    // Dashboard
-    Route::view('/dashboard', 'dashboard')->name('dashboard');
-
     // Rutas de perfil
-    Route::view('/user', 'profile.user')->name('user');
+    Route::get('/user', [ProfileController::class, 'show'])->name('user');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
