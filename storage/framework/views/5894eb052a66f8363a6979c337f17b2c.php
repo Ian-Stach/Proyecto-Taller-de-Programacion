@@ -4,7 +4,7 @@
 <div class="container my-5">
     <div class="row mb-5">
         <div class="col-md-12">
-            <h1 class="display-4 mb-4" style="color: #FFD700;">🦕 Quiénes Somos</h1>
+            <h1 class="display-4 mb-4 static-page-title">🦕 Quiénes Somos</h1>
             <hr class="mb-5">
         </div>
     </div>
@@ -29,8 +29,8 @@
         <div class="col-md-4">
             <div class="card bg-warning text-dark">
                 <div class="card-body text-center">
-                    <h3 style="font-size: 3rem;">🧬</h3>
-                    <h5 class="card-title">Tecnología de Clase Mondial</h5>
+                    <h3 class="about-highlight-icon">🧬</h3>
+                    <h5 class="card-title">Tecnología de clase mundial</h5>
                     <p class="card-text">Utilizamos tecnología genética de punta para recrear especies extintas con precisión científica.</p>
                 </div>
             </div>

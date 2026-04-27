@@ -7,6 +7,10 @@
         'stock_desc' => 'Mayor stock',
     ];
 
+    $favoriteProductIds = Auth::check()
+        ? Auth::user()->favorites()->pluck('product_id')->all()
+        : [];
+
     $baseParams = [];
 
     if (request()->filled('search')) {
@@ -149,67 +153,93 @@
     <div class="row">
         @forelse($products as $product)
             <div class="col-6 col-md-4 col-lg-3 mb-4">
-                <div class="card h-100 shadow-sm">
-                    @if($product->image ?? false)
-                        <div class="products-image-wrapper products-grid-image-wrapper">
+                @php
+                    $isFavorite = in_array($product->id, $favoriteProductIds, true);
+                @endphp
+
+                <div class="product-card">
+                    <!-- Imagen -->
+                    <a href="{{ route('products.show', $product) }}"
+                       class="product-card-link"
+                       aria-label="Ver detalle de {{ $product->name }}"
+                    ></a>
+
+                    <div class="product-card-image-wrap">
+                        @if($product->image ?? false)
                             <img src="{{ $product->image }}"
-                                 class="card-img-top products-grid-image"
+                                 class="product-card-img"
                                  alt="{{ $product->name }}"
                                  onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');"
                             >
-                            <div class="bg-light products-image-placeholder d-none">
+                            <div class="product-card-img-placeholder d-none">
                                 <span class="text-muted">Sin imagen</span>
                             </div>
-                        </div>
-                    @else
-                        <div class="bg-light products-image-placeholder">
-                            <span class="text-muted">Sin imagen</span>
-                        </div>
-                    @endif
+                        @else
+                            <div class="product-card-img-placeholder">
+                                <span class="text-muted">Sin imagen</span>
+                            </div>
+                        @endif
 
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">{{ $product->name }}</h5>
-                        <p class="card-text text-muted small mb-2">{{ Str::limit($product->description, 60) }}</p>
+                        <!-- Corazon favoritos (top-right, visible en hover) -->
+                        @if(Auth::check())
+                            <form action="{{ $isFavorite ? route('favorites.remove', $product) : route('favorites.add', $product) }}"
+                                  method="POST"
+                                  class="product-card-fav-form"
+                                  data-products-favorite-form
+                                  data-product-id="{{ $product->id }}"
+                            >
+                                @csrf
 
-                        <div class="mb-2 d-flex flex-wrap gap-1">
+                                @if($isFavorite)
+                                    @method('DELETE')
+                                @endif
+
+                                <button type="submit"
+                                        class="product-card-fav-btn {{ $isFavorite ? 'is-active' : '' }}"
+                                        aria-label="{{ $isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="currentColor">
+                                        <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        @endif
+
+                        <!-- Boton carrito (overlay en hover) -->
+                        @if(Auth::check() && $product->stock > 0)
+                            <div class="product-card-overlay">
+                                <form action="{{ route('cart.add', $product) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="product-card-cart-btn">
+                                        Añadir al carrito
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Info -->
+                    <div class="product-card-body">
+                        <div class="product-card-categories">
                             @forelse($product->deepestCategories() as $category)
-                                <span class="badge bg-dark text-light">{{ $category->name }}</span>
+                                <span class="product-card-badge">{{ $category->name }}</span>
                             @empty
-                                <span class="badge bg-secondary">Sin categoria</span>
+                                <span class="product-card-badge product-card-badge--muted">Sin categoria</span>
                             @endforelse
                         </div>
-                        <div class="mb-3">
-                            <span class="badge 
-                                @if($product->stock > 5) bg-success 
-                                @elseif($product->stock > 0) bg-warning text-dark
-                                @else bg-danger @endif"
-                            >
-                                Stock: {{ $product->stock }}
-                            </span>
-                        </div>
-                        <div class="mt-auto">
-                            <p class="fs-5 fw-bold text-warning mb-3">${{ number_format($product->price, 2) }}</p>
 
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('products.show', $product) }}"
-                                   class="btn btn-sm btn-info flex-grow-1"
-                                >👁️ Detalles
-                                </a>
-                                @if(Auth::check())
-                                    <form action="{{ route('favorites.add', $product) }}"
-                                        method="POST"
-                                        class="d-inline"
-                                    >
-                                    @csrf
-                                        <button type="submit"
-                                                class="btn btn-sm btn-danger"
-                                                aria-label="Agregar a favoritos"
-                                        >❤️
-                                        </button>
-                                    </form>
-                                @endif
-                            </div>
-                        </div>
+                        <h5 class="product-card-name">{{ $product->name }}</h5>
+
+                        <p class="product-card-desc">{{ Str::limit($product->description, 60) }}</p>
+
+                        <p class="product-card-price">${{ number_format($product->price, 2) }}</p>
+
+                        <span class="product-card-stock
+                            @if($product->stock > 5) product-card-stock--ok
+                            @elseif($product->stock > 0) product-card-stock--low
+                            @else product-card-stock--out @endif"
+                        >Stock: {{ $product->stock }}</span>
                     </div>
                 </div>
             </div>

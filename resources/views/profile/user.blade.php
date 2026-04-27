@@ -13,10 +13,33 @@
         <header class="navbar navbar-expand-lg navbar-dark bg-black header-tall user-account-header">
             <div class="container-fluid user-account-header-bar">
                 <div class="user-account-brand">
-                    <img src="{{ asset('images/jp_logo.jpg') }}" alt="logo" width="60" height="40" class="d-inline-block align-text-top">
-                    <a class="navbar-brand navbar-brand-custom navbar-brand-large mb-0" href="{{ route('home') }}">Jurassic Store</a>
+                    <button class="navbar-toggler d-md-none account-menu-toggle"
+                            type="button"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#accountSidebarMobile"
+                            aria-controls="accountSidebarMobile"
+                            aria-label="Abrir menú de cuenta"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <a href="{{ route('home') }}"
+                       class="d-inline-flex align-items-center"
+                    >
+                        <img src="{{asset('images/jp_logo.jpg') }}"
+                             alt="logo"
+                             width="60"
+                             height="40"
+                             class="d-inline-block align-text-top"
+                        >
+                    </a>
+
+                    <a class="navbar-brand navbar-brand-custom navbar-brand-large mb-0 d-none d-md-inline-block"
+                       href="{{ route('home') }}"
+                    >Jurassic Store
+                    </a>
                 </div>
-                <div class="user-account-summary">
+
+                <div class="user-account-summary d-none d-md-flex">
                     <div class="user-account-meta">
                         <div class="user-account-name">{{ Auth::user()->name }}</div>
                         <div class="user-account-email">{{ Auth::user()->email }}</div>
@@ -25,17 +48,101 @@
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </div>
                 </div>
+
+                <a href="{{ route('user') }}"
+                   class="d-flex d-md-none user-account-mobile-avatar-link"
+                   aria-label="Mi cuenta"
+                >
+                    <div class="user-account-avatar">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                </a>
             </div>
         </header>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-warning navbar-short">
+            <div class="container-fluid">
+                <div class="user-account-top-links d-flex flex-wrap gap-2 align-items-center justify-content-center w-100">
+                    <a class="nav-link" href="{{ route('home') }}">Inicio</a>
+                    <a class="nav-link" href="{{ route('products.index') }}">Productos</a>
+                    <a class="nav-link" href="{{ route('about') }}">Sobre nosotros</a>
+                    <a class="nav-link" href="{{ route('shipping') }}">Envío</a>
+                    <a class="nav-link" href="{{ route('contact') }}">Contacto</a>
+                    <a class="nav-link" href="{{ route('terms') }}">Términos</a>
+                </div>
+            </div>
+        </nav>
 
         @php
             $currentPanel = $currentPanel ?? request()->query('panel', 'overview');
         @endphp
 
+        <!-- offcanvas movil --> 
+        <div class="offcanvas offcanvas-start text-bg-dark account-sidebar-mobile d-md-none"
+             tabindex="-1"
+             id="accountSidebarMobile"
+             aria-labelledby="accountSidebarMobileLabel"
+        >
+            <div class="offcanvas-header">
+                <div>
+                    <h2 class="offcanvas-title h5 mb-1"
+                        id="accountSidebarMobileLabel"
+                    >Mi cuenta
+                    </h2>
+                    <div class="small text-white-50">{{ Auth::user()->email }}</div>
+                </div>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="offcanvas"
+                        aria-label="Cerrar"
+                ></button>
+            </div>
+
+            <div class="offcanvas-body">
+                <ul class="nav flex-column gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'overview' ? 'is-current' : '' }}"
+                           href="{{ route('user', ['panel' => 'overview']) }}"
+                        >
+                            <span class="me-2">🏠</span> Información general
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'security' ? 'is-current' : '' }}"
+                           href="{{ route('user', ['panel' => 'security']) }}"
+                        >
+                            <span class="me-2">🔒</span> Seguridad
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'orders' ? 'is-current' : '' }}"
+                           href="{{ route('user', ['panel' => 'orders']) }}"
+                        >
+                            <span class="me-2">🧾</span> Pedidos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'favorites' ? 'is-current' : '' }}"
+                           href="{{ route('user', ['panel' => 'favorites']) }}"
+                        >
+                            <span class="me-2">⭐</span> Favoritos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'edit' ? 'is-current' : '' }}"
+                           href="{{ route('user', ['panel' => 'edit']) }}"
+                        >
+                            <span class="me-2">✏️</span> Editar perfil
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <div class="container-fluid px-0">
             <div class="row gx-0">
                 <!-- SIDEBAR DE CUENTA (sin bordes redondeados, altura completa) -->
-                <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar p-0" style="min-height: calc(100vh - 80px); position:sticky; top:80px; border-radius:0;">
+                <nav class="d-none d-md-block col-md-3 col-lg-2 bg-dark sidebar p-0 account-sidebar">
                     <div class="sidebar-sticky pt-4 px-3">
                         <ul class="nav flex-column gap-2">
                             <li class="nav-item">
@@ -82,7 +189,7 @@
                     </div>
                 </nav>
                 <!-- CONTENIDO PRINCIPAL DE LA CUENTA (a la derecha del sidebar) -->
-                <main class="col-md-9 col-lg-10 pt-4">
+                <main class="col-12 col-md-9 col-lg-10 pt-4">
                     <div class="ps-md-5 ps-lg-5 pe-md-4 pe-lg-4">
                         @if (request()->query('verified') === '1' && $currentPanel === 'overview')
                             <div class="alert alert-success mb-4" role="alert">

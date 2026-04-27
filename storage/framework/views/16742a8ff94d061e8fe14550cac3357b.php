@@ -7,6 +7,10 @@
         'stock_desc' => 'Mayor stock',
     ];
 
+    $favoriteProductIds = Auth::check()
+        ? Auth::user()->favorites()->pluck('product_id')->all()
+        : [];
+
     $baseParams = [];
 
     if (request()->filled('search')) {
@@ -149,68 +153,93 @@
     <div class="row">
         <?php $__empty_1 = true; $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
             <div class="col-6 col-md-4 col-lg-3 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <?php if($product->image ?? false): ?>
-                        <div class="products-image-wrapper products-grid-image-wrapper">
+                <?php
+                    $isFavorite = in_array($product->id, $favoriteProductIds, true);
+                ?>
+
+                <div class="product-card">
+                    <!-- Imagen -->
+                    <a href="<?php echo e(route('products.show', $product)); ?>"
+                       class="product-card-link"
+                       aria-label="Ver detalle de <?php echo e($product->name); ?>"
+                    ></a>
+
+                    <div class="product-card-image-wrap">
+                        <?php if($product->image ?? false): ?>
                             <img src="<?php echo e($product->image); ?>"
-                                 class="card-img-top products-grid-image"
+                                 class="product-card-img"
                                  alt="<?php echo e($product->name); ?>"
                                  onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');"
                             >
-                            <div class="bg-light products-image-placeholder d-none">
+                            <div class="product-card-img-placeholder d-none">
                                 <span class="text-muted">Sin imagen</span>
                             </div>
-                        </div>
-                    <?php else: ?>
-                        <div class="bg-light products-image-placeholder">
-                            <span class="text-muted">Sin imagen</span>
-                        </div>
-                    <?php endif; ?>
+                        <?php else: ?>
+                            <div class="product-card-img-placeholder">
+                                <span class="text-muted">Sin imagen</span>
+                            </div>
+                        <?php endif; ?>
 
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title"><?php echo e($product->name); ?></h5>
-                        <p class="card-text text-muted small mb-2"><?php echo e(Str::limit($product->description, 60)); ?></p>
+                        <!-- Corazon favoritos (top-right, visible en hover) -->
+                        <?php if(Auth::check()): ?>
+                            <form action="<?php echo e($isFavorite ? route('favorites.remove', $product) : route('favorites.add', $product)); ?>"
+                                  method="POST"
+                                  class="product-card-fav-form"
+                                  data-products-favorite-form
+                                  data-product-id="<?php echo e($product->id); ?>"
+                            >
+                                <?php echo csrf_field(); ?>
 
-                        <div class="mb-2 d-flex flex-wrap gap-1">
+                                <?php if($isFavorite): ?>
+                                    <?php echo method_field('DELETE'); ?>
+                                <?php endif; ?>
+
+                                <button type="submit"
+                                        class="product-card-fav-btn <?php echo e($isFavorite ? 'is-active' : ''); ?>"
+                                        aria-label="<?php echo e($isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'); ?>"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="currentColor">
+                                        <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        <?php endif; ?>
+
+                        <!-- Boton carrito (overlay en hover) -->
+                        <?php if(Auth::check() && $product->stock > 0): ?>
+                            <div class="product-card-overlay">
+                                <form action="<?php echo e(route('cart.add', $product)); ?>" method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="product-card-cart-btn">
+                                        Añadir al carrito
+                                    </button>
+                                </form>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="product-card-body">
+                        <div class="product-card-categories">
                             <?php $__empty_2 = true; $__currentLoopData = $product->deepestCategories(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
-                                <span class="badge bg-dark text-light"><?php echo e($category->name); ?></span>
+                                <span class="product-card-badge"><?php echo e($category->name); ?></span>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_2): ?>
-                                <span class="badge bg-secondary">Sin categoria</span>
+                                <span class="product-card-badge product-card-badge--muted">Sin categoria</span>
                             <?php endif; ?>
                         </div>
-                        <div class="mb-3">
-                            <span class="badge 
-                                <?php if($product->stock > 5): ?> bg-success 
-                                <?php elseif($product->stock > 0): ?> bg-warning text-dark
-                                <?php else: ?> bg-danger <?php endif; ?>"
-                            >
-                                Stock: <?php echo e($product->stock); ?>
 
-                            </span>
-                        </div>
-                        <div class="mt-auto">
-                            <p class="fs-5 fw-bold text-warning mb-3">$<?php echo e(number_format($product->price, 2)); ?></p>
+                        <h5 class="product-card-name"><?php echo e($product->name); ?></h5>
 
-                            <div class="d-flex gap-2">
-                                <a href="<?php echo e(route('products.show', $product)); ?>"
-                                   class="btn btn-sm btn-info flex-grow-1"
-                                >👁️ Detalles
-                                </a>
-                                <?php if(Auth::check()): ?>
-                                    <form action="<?php echo e(route('favorites.add', $product)); ?>"
-                                        method="POST"
-                                        class="d-inline"
-                                    >
-                                    <?php echo csrf_field(); ?>
-                                        <button type="submit"
-                                                class="btn btn-sm btn-danger"
-                                                aria-label="Agregar a favoritos"
-                                        >❤️
-                                        </button>
-                                    </form>
-                                <?php endif; ?>
-                            </div>
-                        </div>
+                        <p class="product-card-desc"><?php echo e(Str::limit($product->description, 60)); ?></p>
+
+                        <p class="product-card-price">$<?php echo e(number_format($product->price, 2)); ?></p>
+
+                        <span class="product-card-stock
+                            <?php if($product->stock > 5): ?> product-card-stock--ok
+                            <?php elseif($product->stock > 0): ?> product-card-stock--low
+                            <?php else: ?> product-card-stock--out <?php endif; ?>"
+                        >Stock: <?php echo e($product->stock); ?></span>
                     </div>
                 </div>
             </div>

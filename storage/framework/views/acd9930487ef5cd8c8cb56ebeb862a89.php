@@ -16,9 +16,9 @@
 
     <body>
         <!-- HEADER COMUN PARA TODAS LAS VISTAS -->
-        <header class="navbar navbar-expand-lg navbar-dark bg-black header-tall align-items-center">
-            <div class="container-fluid">
-                <div class="d-flex gap-3">
+        <header class="navbar navbar-dark bg-black header-tall align-items-center">
+            <div class="container-fluid d-flex align-items-center gap-3">
+                <div class="d-flex gap-3 flex-shrink-0">
                     <img src="<?php echo e(asset('images/jp_logo.jpg')); ?>"
                          alt="logo"
                          width="60"
@@ -30,11 +30,44 @@
                     >Jurassic Store</a>
                 </div>
 
-                <ul class="nav justify-content-end">
+                <!-- BUSCADOR CENTRAL DEL HEADER -->
+                <form method="GET"
+                      action="<?php echo e(route('products.index')); ?>"
+                      class="header-search-form"
+                      data-header-search-form
+                      data-suggestions-url="<?php echo e(route('products.suggestions')); ?>"
+                      role="search"
+                >
+                    <div class="input-group header-search-group">
+                        <input class="form-control header-search-input"
+                               type="search"
+                               name="search"
+                               placeholder="Buscar productos..."
+                               value="<?php echo e(request('search')); ?>"
+                               aria-label="Buscar productos"
+                               autocomplete="off"
+                        >
+                        <button class="btn header-search-button"
+                                type="submit"
+                                aria-label="Buscar"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 height="20px"
+                                 viewBox="0 -960 960 960"
+                                 width="20px"
+                                 fill="#000000"
+                            >
+                                <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+
+                <ul class="nav ms-auto align-items-center flex-shrink-0">
                     <?php if(auth()->guard()->check()): ?>
                         <!-- favorites -->
                         <li class="nav-item">
-                            <a class="nav-link scale-effect-icon"
+                                     <a class="nav-link scale-effect-icon header-utility-icon"
                                href="<?php echo e(route('favorites.index')); ?>"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +84,7 @@
                     
                         <!-- cart -->
                         <li class="nav-item">
-                            <button class="nav-link scale-effect-icon btn btn-link"
+                                <button class="nav-link scale-effect-icon btn btn-link header-utility-icon"
                                     type="button"
                                     data-bs-toggle="offcanvas"
                                     data-bs-target="#carritoSidebar"
@@ -71,23 +104,23 @@
 
                     <!-- profile -->
                     <?php if(auth()->guard()->check()): ?>
-                        <!-- USUARIO AUTENTICADO -->
-                        <li class="nav-item user-badge">
-                            👤 <?php echo e(Auth::user()->name); ?>
-
-                        </li>
+                        <!-- ACCESO A CUENTA CON AVATAR -->
                         <li class="nav-item">
-                            <form method="POST"
-                                  action="<?php echo e(route('logout')); ?>"
-                                  class="d-inline"
+                            <a class="nav-link user-account-link text-decoration-none"
+                               href="<?php echo e(route('user')); ?>"
+                               aria-label="Abrir mi cuenta"
                             >
-                                <?php echo csrf_field(); ?>
-                                <button type="submit"
-                                        class="nav-link btn btn-link logout-button"
-                                >
-                                    🚪 Cerrar sesión
-                                </button>
-                            </form>
+                                <span class="user-account-summary">
+                                    <span class="user-account-meta">
+                                        <span class="user-account-name"><?php echo e(Auth::user()->name); ?></span>
+                                        <span class="user-account-email"><?php echo e(Auth::user()->email); ?></span>
+                                    </span>
+                                    <span class="user-account-avatar">
+                                        <?php echo e(strtoupper(substr(Auth::user()->name, 0, 1))); ?>
+
+                                    </span>
+                                </span>
+                            </a>
                         </li>
                     <?php else: ?>
                         <!-- USUARIO NO AUTENTICADO -->
@@ -110,7 +143,12 @@
                         </li>
                         <span class="nav-link">|</span>
                         <li class="nav-item">
-                            <a class="nav-link scale-effect-icon" href="<?php echo e(route('register')); ?>">Registrarse</a>
+                            <button class="nav-link scale-effect-icon border-0 bg-transparent"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#registerModal"
+                            >Registrarse
+                            </button>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -125,7 +163,7 @@
                     
                     <a class="nav-link" href="<?php echo e(route('products.index')); ?>">Productos</a>
                     <a class="nav-link" href="<?php echo e(route('about')); ?>">Sobre nosotros</a>
-                    <a class="nav-link" href="<?php echo e(route('shipping')); ?>">Envío</a>
+                    <a class="nav-link" href="<?php echo e(route('shipping')); ?>">Comercialización</a>
                     <a class="nav-link" href="<?php echo e(route('contact')); ?>">Contacto</a>
                     <a class="nav-link" href="<?php echo e(route('terms')); ?>">Términos</a>
                 </div>
@@ -221,8 +259,9 @@
             </div>
         </footer>
 
+        <!-- MODAL DE LOGIN -->
         <?php if(auth()->guard()->guest()): ?>
-            <div class="modal fade"
+            <div class="modal fade auth-modal"
                  id="loginModal"
                  tabindex="-1"
                  aria-labelledby="loginModalLabel"
@@ -328,10 +367,12 @@ unset($__errorArgs, $__bag); ?>
                                 </div>
 
                                 <?php if(Route::has('password.request')): ?>
-                                    <a class="link-dark"
-                                       href="<?php echo e(route('password.request')); ?>"
+                                    <button type="button"
+                                            class="btn btn-link link-dark p-0 text-decoration-none"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#forgotPasswordModal"
                                     >¿Olvidaste tu contraseña?
-                                    </a>
+                                    </button>
                                 <?php endif; ?>
                             </div>
 
@@ -367,6 +408,332 @@ unset($__errorArgs, $__bag); ?>
             <?php endif; ?>
         <?php endif; ?>
 
+        <!-- MODAL DE REGISTRO -->
+        <?php if(auth()->guard()->guest()): ?>
+            <div class="modal fade auth-modal"
+                 id="registerModal"
+                 tabindex="-1"
+                 aria-labelledby="registerModalLabel"
+                 aria-hidden="true"
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <h5 class="modal-title"
+                                id="registerModalLabel"
+                            >Crear cuenta
+                            </h5>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Cerrar"
+                            ></button>
+                        </div>
+
+                        <form method="POST"
+                              action="<?php echo e(route('register')); ?>"
+                        >
+                            <?php echo csrf_field(); ?>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="register-name"
+                                           class="form-label"
+                                    >Nombre
+                                    </label>
+                                    <input id="register-name"
+                                           type="text"
+                                           name="name"
+                                           value="<?php echo e(old('name')); ?>"
+                                           class="form-control <?php $__errorArgs = ['name', 'register'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                           required
+                                           autocomplete="name"
+                                    >
+                                    <?php $__errorArgs = ['name', 'register'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="register-email"
+                                           class="form-label"
+                                    >Email
+                                    </label>
+                                    <input id="register-email"
+                                           type="email"
+                                           name="email"
+                                           value="<?php echo e(old('email')); ?>"
+                                           class="form-control <?php $__errorArgs = ['email', 'register'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                           required
+                                           autocomplete="email"
+                                    >
+                                    <?php $__errorArgs = ['email', 'register'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="register-password"
+                                           class="form-label"
+                                    >Contraseña
+                                    </label>
+                                    <input id="register-password"
+                                           type="password"
+                                           name="password"
+                                           class="form-control <?php $__errorArgs = ['password', 'register'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                           required
+                                           autocomplete="new-password"
+                                    >
+                                    <?php $__errorArgs = ['password', 'register'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="register-password-confirmation"
+                                           class="form-label"
+                                    >Confirmar contraseña
+                                    </label>
+                                    <input id="register-password-confirmation"
+                                           type="password"
+                                           name="password_confirmation"
+                                           class="form-control <?php $__errorArgs = ['password_confirmation', 'register'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                           required
+                                           autocomplete="new-password"
+                                    >
+                                    <?php $__errorArgs = ['password_confirmation', 'register'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button"
+                                        class="btn btn-secondary"
+                                        data-bs-dismiss="modal"
+                                >Cerrar
+                                </button>
+                                <button type="submit"
+                                        class="btn btn-warning"
+                                >Registrarse
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+        <?php if(auth()->guard()->guest()): ?>
+            <?php if($errors->register->isNotEmpty()): ?>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const registerModalElement = document.getElementById('registerModal');
+
+                        if (registerModalElement) {
+                            const registerModal = new bootstrap.Modal(registerModalElement);
+                            registerModal.show();
+                        }
+                    });
+                </script>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <!-- MODAL DE RECUPERACION DE CONTRASENA -->
+        <?php if(auth()->guard()->guest()): ?>
+            <div class="modal fade auth-modal"
+                 id="forgotPasswordModal"
+                 tabindex="-1"
+                 aria-labelledby="forgotPasswordModalLabel"
+                 aria-hidden="true"
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <h5 class="modal-title"
+                                id="forgotPasswordModalLabel"
+                            >Recuperar contraseña
+                            </h5>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Cerrar"
+                            ></button>
+                        </div>
+
+                        <form method="POST"
+                              action="<?php echo e(route('password.email')); ?>"
+                        >
+                            <?php echo csrf_field(); ?>
+                            <div class="modal-body">
+                                <p class="text-muted mb-3">
+                                    Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña.
+                                </p>
+
+                                <?php if(session('forgotPasswordStatus')): ?>
+                                    <div class="alert alert-success"><?php echo e(session('forgotPasswordStatus')); ?></div>
+                                <?php endif; ?>
+
+                                <div class="mb-3">
+                                    <label for="forgot-password-email"
+                                           class="form-label"
+                                    >Email
+                                    </label>
+                                    <input id="forgot-password-email"
+                                           type="email"
+                                           name="email"
+                                           value="<?php echo e(old('email')); ?>"
+                                           class="form-control <?php $__errorArgs = ['email', 'forgotPassword'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                           required
+                                           autocomplete="username"
+                                    >
+                                    <?php $__errorArgs = ['email', 'forgotPassword'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer justify-content-between">
+                                <button type="button"
+                                        class="btn btn-link link-dark p-0 text-decoration-none"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#loginModal"
+                                >Volver al login</button>
+                                <div class="d-flex gap-2">
+                                    <button type="button"
+                                            class="btn btn-secondary"
+                                            data-bs-dismiss="modal"
+                                    >Cerrar</button>
+                                    <button type="submit"
+                                            class="btn btn-warning"
+                                    >Enviar enlace</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if(auth()->guard()->guest()): ?>
+            <?php if($errors->forgotPassword->isNotEmpty() || session('forgotPasswordStatus')): ?>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const forgotPasswordModalElement = document.getElementById('forgotPasswordModal');
+
+                        if (forgotPasswordModalElement) {
+                            const forgotPasswordModal = new bootstrap.Modal(forgotPasswordModalElement);
+                            forgotPasswordModal.show();
+                        }
+                    });
+                </script>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if(auth()->guard()->guest()): ?>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const modalQueryMap = {
+                        login: 'loginModal',
+                        register: 'registerModal',
+                        'forgot-password': 'forgotPasswordModal',
+                    };
+                    const searchParams = new URLSearchParams(window.location.search);
+                    const modalKey = searchParams.get('authModal');
+                    const modalId = modalKey ? modalQueryMap[modalKey] : null;
+
+                    if (!modalId) {
+                        return;
+                    }
+
+                    const modalElement = document.getElementById(modalId);
+
+                    if (!modalElement) {
+                        return;
+                    }
+
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+
+                    searchParams.delete('authModal');
+
+                    const nextQuery = searchParams.toString();
+                    const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ''}${window.location.hash}`;
+
+                    window.history.replaceState({}, '', nextUrl);
+                });
+            </script>
+        <?php endif; ?>
+                                           
+        <script src="<?php echo e(asset('js/header-search-suggest.js')); ?>" defer></script>
         <script src="<?php echo e(asset('vendor/bootstrap/js/bootstrap.bundle.min.js')); ?>"></script>
     </body>
 </html><?php /**PATH C:\Users\ianiv\Herd\iniciativa-dinosaurios\resources\views/layouts/Jurassic_Store.blade.php ENDPATH**/ ?>

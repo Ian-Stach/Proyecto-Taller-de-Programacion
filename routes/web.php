@@ -7,14 +7,40 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Category;
 
 // ============================================================================
 // 🟢 RUTAS PÚBLICAS (Acceso para todos)
 // ============================================================================
 
 // Páginas estáticas
-Route::view('/', 'principal')->name('home');
-Route::view('/principal', 'principal')->name('principal');
+$principalPage = function () {
+    $featuredCategory = Category::query()
+        ->withCount([
+            'products as active_products_count' => fn ($query) => $query->where('products.active', true),
+        ])
+        ->orderByDesc('active_products_count')
+        ->orderBy('name')
+        ->first();
+
+    $featuredProducts = collect();
+
+    if ($featuredCategory && $featuredCategory->active_products_count > 0) {
+        $featuredProducts = $featuredCategory->products()
+            ->where('products.active', true)
+            ->orderBy('products.name')
+            ->limit(16)
+            ->get(['products.id', 'products.name', 'products.price', 'products.image', 'products.stock']);
+    }
+
+    return view('principal', [
+        'featuredCategory' => $featuredCategory,
+        'featuredProducts' => $featuredProducts,
+    ]);
+};
+
+Route::get('/', $principalPage)->name('home');
+Route::get('/principal', $principalPage)->name('principal');
 Route::view('/about', 'about')->name('about');
 Route::view('/shipping', 'shipping')->name('shipping');
 Route::view('/terms', 'terms')->name('terms');
@@ -25,6 +51,7 @@ Route::post('/contact', [ContactController::class, 'store'])->middleware('thrott
 
 // Rutas de productos (dinámicas)
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/suggestions', [ProductController::class, 'suggestions'])->name('products.suggestions');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
 // ============================================================================

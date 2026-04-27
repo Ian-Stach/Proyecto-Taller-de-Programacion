@@ -1,6 +1,24 @@
 
 
 <?php $__env->startSection('content'); ?>
+<?php
+    $isFavorite = Auth::check()
+        ? Auth::user()->favorites()->where('product_id', $product->id)->exists()
+        : false;
+
+    $habitatLabel = $product->habitat !== null
+        ? (\App\Models\Product::HABITAT_OPTIONS[$product->habitat] ?? ucfirst($product->habitat))
+        : null;
+
+    $dietLabel = $product->diet !== null
+        ? (\App\Models\Product::DIET_OPTIONS[$product->diet] ?? ucfirst($product->diet))
+        : null;
+
+    $eraLabel = $product->era !== null
+        ? (\App\Models\Product::ERA_OPTIONS[$product->era] ?? ucfirst($product->era))
+        : null;
+?>
+
 <div class="container my-5">
     <div class="row">
         <!-- Detalles del Producto -->
@@ -29,7 +47,32 @@
 
         <!-- Información del Producto -->
         <div class="col-md-6">
-            <h1><?php echo e($product->name); ?></h1>
+            <div class="product-detail-header mb-2">
+                <h1 class="mb-0"><?php echo e($product->name); ?></h1>
+
+                <?php if(auth()->guard()->check()): ?>
+                    <form action="<?php echo e($isFavorite ? route('favorites.remove', $product) : route('favorites.add', $product)); ?>"
+                          method="POST"
+                          class="product-detail-fav-form"
+                    >
+                        <?php echo csrf_field(); ?>
+
+                        <?php if($isFavorite): ?>
+                            <?php echo method_field('DELETE'); ?>
+                        <?php endif; ?>
+
+                        <button type="submit"
+                                class="product-detail-fav-btn <?php echo e($isFavorite ? 'is-active' : ''); ?>"
+                                aria-label="<?php echo e($isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'); ?>"
+                                title="<?php echo e($isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'); ?>"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="currentColor">
+                                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
+                            </svg>
+                        </button>
+                    </form>
+                <?php endif; ?>
+            </div>
             
             <div class="mb-3 d-flex flex-wrap gap-2">
                 <?php $__empty_1 = true; $__currentLoopData = $product->deepestCategories(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
@@ -43,12 +86,35 @@
 
             <h3 class="text-warning mb-3">$<?php echo e(number_format($product->price, 2)); ?></h3>
 
-            <?php if($product->height_meters !== null): ?>
-                <div class="mb-3">
-                    <strong>Altura:</strong>
-                    <span class="badge bg-info text-dark"><?php echo e(number_format((float) $product->height_meters, 2)); ?> m</span>
-                </div>
-            <?php endif; ?>
+            <div class="mb-3 product-detail-attributes">
+                <?php if($product->height_meters !== null): ?>
+                    <div class="product-detail-attribute-item">
+                        <strong>Altura:</strong>
+                        <span class="badge bg-info text-dark"><?php echo e(number_format((float) $product->height_meters, 2)); ?> m</span>
+                    </div>
+                <?php endif; ?>
+
+                <?php if($habitatLabel): ?>
+                    <div class="product-detail-attribute-item">
+                        <strong>Hábitat:</strong>
+                        <span class="badge bg-primary"><?php echo e($habitatLabel); ?></span>
+                    </div>
+                <?php endif; ?>
+
+                <?php if($dietLabel): ?>
+                    <div class="product-detail-attribute-item">
+                        <strong>Dieta:</strong>
+                        <span class="badge bg-success"><?php echo e($dietLabel); ?></span>
+                    </div>
+                <?php endif; ?>
+
+                <?php if($eraLabel): ?>
+                    <div class="product-detail-attribute-item">
+                        <strong>Era:</strong>
+                        <span class="badge bg-secondary"><?php echo e($eraLabel); ?></span>
+                    </div>
+                <?php endif; ?>
+            </div>
 
             <div class="mb-4">
                 <strong>Stock:</strong>
@@ -59,27 +125,37 @@
 
             <?php if($product->stock > 0): ?>
                 <?php if(auth()->guard()->check()): ?>
-                    <form action="<?php echo e(route('cart.add', $product)); ?>" method="POST" class="mb-4">
+                    <form action="<?php echo e(route('cart.add', $product)); ?>"
+                          method="POST" class="mb-4"
+                    >
                         <?php echo csrf_field(); ?>
                     
                         <div class="mb-3">
-                            <label for="quantity" class="form-label">Cantidad:</label>
-                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="<?php echo e($product->stock); ?>" class="form-control product-quantity-input">
+                            <label for="quantity"
+                                   class="form-label"
+                            >Cantidad:
+                            </label>
+                            <input type="number"
+                                   name="quantity"
+                                   id="quantity"
+                                   value="1"
+                                   min="1"
+                                   max="<?php echo e($product->stock); ?>"
+                                   class="form-control product-quantity-input"
+                            >
                         </div>
 
-                        <button type="submit" class="btn btn-warning btn-lg me-2">
-                            🛒 Añadir al carrito
+                        <button type="submit"
+                                class="btn btn-warning btn-lg me-2"
+                        >🛒 Añadir al carrito
                         </button>
                     </form>
-                    <form action="<?php echo e(route('favorites.add', $product)); ?>" method="POST" class="d-inline">
-                        <?php echo csrf_field(); ?>
-                        <button type="submit" class="btn btn-danger btn-lg">❤️ Añadir a favoritos</button>
-                    </form>
                      <?php else: ?>
-                        <div class="alert alert-info">
-                            Inicia sesión para agregar este producto al carrito.
-                        </div>
-                        <a href="<?php echo e(route('login')); ?>" class="btn btn-warning btn-lg">Iniciar sesión para comprar</a>
+                        <button type="button"
+                                class="btn btn-warning btn-lg"
+                                data-bs-toggle="modal"
+                                data-bs-target="#loginModal"
+                        >Iniciar sesión para comprar</button>
                 <?php endif; ?>
             <?php else: ?>
                 <div class="alert alert-danger">

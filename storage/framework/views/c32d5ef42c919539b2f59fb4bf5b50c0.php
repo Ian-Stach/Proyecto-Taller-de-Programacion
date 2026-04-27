@@ -2,28 +2,90 @@
 
 <?php $__env->startSection('content'); ?>
 <div class="principal-hero">
-    <form method="GET" action="<?php echo e(route('products.index')); ?>" class="principal-search py-3">
-        <div class="input-group principal-search-group">
-            <input class="form-control principal-search-input"
-                   type="search"
-                   name="search"
-                   value="<?php echo e(request('search')); ?>"
-                   placeholder="Buscar productos..."
-                   aria-label="Buscar productos">
-                <button class="btn d-flex align-items-center justify-content-center principal-search-button"
-                        type="submit"
-                        aria-label="Enviar búsqueda">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
-                        <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
-                    </svg>
-                </button>
-        </div>
-    </form>
-
     <h1 class="principal-title">Bienvenido a JURASSIC STORE</h1>
-    <p class="principal-subtitle">Aquí puedes encontrar los mejores juguetes y productos de dinosaurios.</p>
-    <a href="<?php echo e(route('products.index')); ?>" class="principal-cta">Ver productos</a>
+    <p class="principal-subtitle">Comercializamos dinosaurios reales, listos para exhibicion, investigacion y manejo especializado.</p>
+
+    <?php if(isset($featuredCategory) && isset($featuredProducts) && $featuredProducts->isNotEmpty()): ?>
+        <section class="principal-featured" aria-label="Carrusel de dinosaurios destacados" data-principal-carousel>
+            <div class="principal-featured-head">
+                <h2 class="principal-featured-title">Mas disponibles ahora: <?php echo e($featuredCategory->name); ?></h2>
+                <div class="principal-carousel-controls">
+                    <button type="button" class="principal-carousel-btn" data-carousel-prev aria-label="Mostrar dinosaurios anteriores">
+                        &lsaquo;
+                    </button>
+                    <button type="button" class="principal-carousel-btn" data-carousel-next aria-label="Mostrar mas dinosaurios">
+                        &rsaquo;
+                    </button>
+                </div>
+            </div>
+
+            <div class="principal-carousel-track" data-carousel-track>
+                <?php $__currentLoopData = $featuredProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <article class="principal-dino-card">
+                        <a href="<?php echo e(route('products.show', $product)); ?>" class="principal-dino-link">
+                            <div class="principal-dino-image-wrap">
+                                <?php if($product->image): ?>
+                                    <img src="<?php echo e($product->image); ?>" alt="<?php echo e($product->name); ?>" class="principal-dino-image">
+                                <?php else: ?>
+                                    <div class="principal-dino-image principal-dino-image-placeholder">Sin imagen</div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="principal-dino-body">
+                                <h3 class="principal-dino-name"><?php echo e($product->name); ?></h3>
+                                <p class="principal-dino-price">$<?php echo e(number_format((float) $product->price, 2)); ?></p>
+                            </div>
+                        </a>
+                    </article>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
+        </section>
+    <?php endif; ?>
+
+    <a href="<?php echo e(route('products.index')); ?>" class="principal-cta">Ver dinosaurios disponibles</a>
 </div>
+
+<?php if(isset($featuredProducts) && $featuredProducts->isNotEmpty()): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const root = document.querySelector('[data-principal-carousel]');
+
+            if (!root) {
+                return;
+            }
+
+            const track = root.querySelector('[data-carousel-track]');
+            const prevButton = root.querySelector('[data-carousel-prev]');
+            const nextButton = root.querySelector('[data-carousel-next]');
+
+            if (!track || !prevButton || !nextButton) {
+                return;
+            }
+
+            function getStep() {
+                const cards = track.querySelectorAll('.principal-dino-card');
+                const firstCard = cards[0];
+
+                if (!firstCard) {
+                    return 280;
+                }
+
+                const styles = window.getComputedStyle(track);
+                const gap = Number.parseFloat(styles.columnGap || styles.gap || '16');
+                const cardsPerStep = Math.min(4, cards.length);
+
+                return (firstCard.getBoundingClientRect().width + (Number.isNaN(gap) ? 16 : gap)) * cardsPerStep;
+            }
+
+            prevButton.addEventListener('click', function () {
+                track.scrollBy({ left: -getStep(), behavior: 'smooth' });
+            });
+
+            nextButton.addEventListener('click', function () {
+                track.scrollBy({ left: getStep(), behavior: 'smooth' });
+            });
+        });
+    </script>
+<?php endif; ?>
 
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.Jurassic_Store', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\ianiv\Herd\iniciativa-dinosaurios\resources\views/principal.blade.php ENDPATH**/ ?>

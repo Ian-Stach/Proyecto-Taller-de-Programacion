@@ -1,3 +1,0 @@
-name,description,price,stock,image,active,height_meters,habitat,diet,era,categories
-Aardonyx,Descripcion manual completa del producto.,149.90,12,/images/products/aardonyx.jpg,true,2.00,terrestre,herbivoro,jurasico,Saurischia > Sauropodomorpha > Massospondylidae
-Triceratops,Otro ejemplo para cargar desde CSV.,189.50,8,/images/products/triceratops.jpg,true,3.00,terrestre,herbivoro,cretacico,Ornithischia > Genasauria > Neornithischia > Marginocephalia > Ceratopsia

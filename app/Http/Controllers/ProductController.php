@@ -119,6 +119,40 @@ class ProductController extends Controller
         return view('products.show', compact('product', 'relatedProducts'));
     }
 
+    /**
+     * Sugerencias para autocompletado del buscador
+     * GET /products/suggestions?q=...
+     */
+    public function suggestions(Request $request)
+    {
+        $query = trim((string) $request->input('q', ''));
+
+        if (mb_strlen($query) < 1) {
+            return response()->json(['items' => []]);
+        }
+
+        $searchTerm = $query . '%';
+
+        $products = Product::query()
+            ->where('active', true)
+            ->where('name', 'like', $searchTerm)
+            ->orderBy('name')
+            ->limit(8)
+            ->get(['id', 'name', 'price', 'image']);
+
+        $items = $products->map(function (Product $product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => number_format((float) $product->price, 2),
+                'image' => $product->image,
+                'url' => route('products.show', $product),
+            ];
+        })->values();
+
+        return response()->json(['items' => $items]);
+    }
+
     protected function buildFilterFacets(Collection $categories): array
     {
         $facets = [

@@ -4,6 +4,7 @@
     const asyncFormSelector = 'form[data-products-async-form]';
     const searchFormSelector = 'form[data-products-search-form]';
     const filterFormSelector = 'form[data-products-filter-form]';
+    const favoriteToggleFormSelector = 'form[data-products-favorite-form]';
     const autoSubmitFieldSelector = 'form[data-products-filter-form] input[type="checkbox"], select[name="sort"]';
     const asyncLinkSelector = 'a[data-products-async-link], .products-pagination a';
     let activeRequestController = null;
@@ -182,6 +183,112 @@
             }
         }
     }
+
+    function ensureDeleteMethodInput(form) {
+        let methodInput = form.querySelector('input[name="_method"]');
+
+        if (!methodInput) {
+            methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            form.appendChild(methodInput);
+        }
+
+        methodInput.value = 'DELETE';
+    }
+
+    function removeDeleteMethodInput(form) {
+        const methodInput = form.querySelector('input[name="_method"]');
+
+        if (methodInput) {
+            methodInput.remove();
+        }
+    }
+
+    function applyFavoriteUiState(form, favorited, urls) {
+        const button = form.querySelector('.product-card-fav-btn');
+
+        if (!button) {
+            return;
+        }
+
+        if (favorited) {
+            button.classList.add('is-active');
+            button.setAttribute('aria-label', 'Quitar de favoritos');
+
+            if (urls && urls.remove) {
+                form.setAttribute('action', urls.remove);
+            }
+
+            ensureDeleteMethodInput(form);
+
+            return;
+        }
+
+        button.classList.remove('is-active');
+        button.setAttribute('aria-label', 'Agregar a favoritos');
+
+        if (urls && urls.add) {
+            form.setAttribute('action', urls.add);
+        }
+
+        removeDeleteMethodInput(form);
+    }
+
+    async function submitFavoriteToggle(form) {
+        const submitButton = form.querySelector('button[type="submit"]');
+
+        if (submitButton) {
+            submitButton.disabled = true;
+        }
+
+        try {
+            const response = await fetch(form.getAttribute('action'), {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+                credentials: 'same-origin',
+                body: new FormData(form),
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudo actualizar favoritos.');
+            }
+
+            const payload = await response.json();
+
+            if (typeof payload.favorited !== 'boolean') {
+                throw new Error('Respuesta inválida de favoritos.');
+            }
+
+            applyFavoriteUiState(form, payload.favorited, payload.urls || null);
+        } catch (error) {
+            form.dataset.submitFallback = '1';
+            form.submit();
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+            }
+        }
+    }
+
+    document.addEventListener('submit', function (event) {
+        const favoriteForm = event.target.closest(favoriteToggleFormSelector);
+
+        if (!favoriteForm || !getProductsPage()) {
+            return;
+        }
+
+        if (favoriteForm.dataset.submitFallback === '1') {
+            favoriteForm.dataset.submitFallback = '0';
+            return;
+        }
+
+        event.preventDefault();
+        submitFavoriteToggle(favoriteForm);
+    });
 
     document.addEventListener('submit', function (event) {
         const form = event.target.closest(asyncFormSelector);

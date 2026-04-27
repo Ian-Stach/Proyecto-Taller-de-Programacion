@@ -16,9 +16,9 @@
 
     <body>
         <!-- HEADER COMUN PARA TODAS LAS VISTAS -->
-        <header class="navbar navbar-expand-lg navbar-dark bg-black header-tall align-items-center">
-            <div class="container-fluid">
-                <div class="d-flex gap-3">
+        <header class="navbar navbar-dark bg-black header-tall align-items-center">
+            <div class="container-fluid d-flex align-items-center gap-3">
+                <div class="d-flex gap-3 flex-shrink-0">
                     <img src="{{ asset('images/jp_logo.jpg') }}"
                          alt="logo"
                          width="60"
@@ -30,7 +30,40 @@
                     >Jurassic Store</a>
                 </div>
 
-                <ul class="nav justify-content-end align-items-center">
+                <!-- BUSCADOR CENTRAL DEL HEADER -->
+                <form method="GET"
+                      action="{{ route('products.index') }}"
+                      class="header-search-form"
+                      data-header-search-form
+                      data-suggestions-url="{{ route('products.suggestions') }}"
+                      role="search"
+                >
+                    <div class="input-group header-search-group">
+                        <input class="form-control header-search-input"
+                               type="search"
+                               name="search"
+                               placeholder="Buscar productos..."
+                               value="{{ request('search') }}"
+                               aria-label="Buscar productos"
+                               autocomplete="off"
+                        >
+                        <button class="btn header-search-button"
+                                type="submit"
+                                aria-label="Buscar"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 height="20px"
+                                 viewBox="0 -960 960 960"
+                                 width="20px"
+                                 fill="#000000"
+                            >
+                                <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+
+                <ul class="nav ms-auto align-items-center flex-shrink-0">
                     @auth
                         <!-- favorites -->
                         <li class="nav-item">
@@ -129,7 +162,7 @@
                     
                     <a class="nav-link" href="{{ route('products.index') }}">Productos</a>
                     <a class="nav-link" href="{{ route('about') }}">Sobre nosotros</a>
-                    <a class="nav-link" href="{{ route('shipping') }}">Envío</a>
+                    <a class="nav-link" href="{{ route('shipping') }}">Comercialización</a>
                     <a class="nav-link" href="{{ route('contact') }}">Contacto</a>
                     <a class="nav-link" href="{{ route('terms') }}">Términos</a>
                 </div>
@@ -600,9 +633,8 @@
                 });
             </script>
         @endguest
-
-
                                            
+        <script src="{{ asset('js/header-search-suggest.js') }}" defer></script>
         <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     </body>
 </html>
