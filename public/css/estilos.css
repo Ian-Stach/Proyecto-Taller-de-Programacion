@@ -376,7 +376,7 @@
 
 /* Construye el hero principal con fondo y centrado general. */
 .principal-hero {
-    background-image: url('/images/Principal_bg.png');
+    background-image: url('/images/js_bg_principal.png');
     background-size: cover;
     background-position: center top;
     background-attachment: fixed;

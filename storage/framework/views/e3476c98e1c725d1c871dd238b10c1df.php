@@ -1,85 +1,9 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>JURASSIC STORE</title>
-        <link rel="stylesheet" href="<?php echo e(asset('vendor/bootstrap/css/bootstrap.min.css')); ?>">
-        <link rel="stylesheet" href="<?php echo e(asset('css/estilos.css')); ?>">
-    </head>
 
-    <body>
-        <!-- HEADER MINIMALISTA PARA USER -->
-        <header class="navbar navbar-expand-lg navbar-dark bg-black header-tall user-account-header">
-            <div class="container-fluid user-account-header-bar">
-                <div class="user-account-brand">
-                    <button class="navbar-toggler d-md-none account-menu-toggle"
-                            type="button"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#accountSidebarMobile"
-                            aria-controls="accountSidebarMobile"
-                            aria-label="Abrir menú de cuenta"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <a href="<?php echo e(route('home')); ?>"
-                       class="d-inline-flex align-items-center"
-                    >
-                        <img src="<?php echo e(asset('images/jp_logo.jpg')); ?>"
-                             alt="logo"
-                             width="60"
-                             height="40"
-                             class="d-inline-block align-text-top"
-                        >
-                    </a>
 
-                    <a class="navbar-brand navbar-brand-custom navbar-brand-large mb-0 d-none d-md-inline-block"
-                       href="<?php echo e(route('home')); ?>"
-                    >Jurassic Store
-                    </a>
-                </div>
 
-                <div class="user-account-summary d-none d-md-flex">
-                    <div class="user-account-meta">
-                        <div class="user-account-name"><?php echo e(Auth::user()->name); ?></div>
-                        <div class="user-account-email"><?php echo e(Auth::user()->email); ?></div>
-                    </div>
-                    <div class="user-account-avatar">
-                        <?php echo e(strtoupper(substr(Auth::user()->name, 0, 1))); ?>
-
-                    </div>
-                </div>
-
-                <a href="<?php echo e(route('user')); ?>"
-                   class="d-flex d-md-none user-account-mobile-avatar-link"
-                   aria-label="Mi cuenta"
-                >
-                    <div class="user-account-avatar">
-                        <?php echo e(strtoupper(substr(Auth::user()->name, 0, 1))); ?>
-
-                    </div>
-                </a>
-            </div>
-        </header>
-
-        <nav class="navbar navbar-expand-lg navbar-dark bg-warning navbar-short">
-            <div class="container-fluid">
-                <div class="user-account-top-links d-flex flex-wrap gap-2 align-items-center justify-content-center w-100">
-                    <a class="nav-link" href="<?php echo e(route('home')); ?>">Inicio</a>
-                    <a class="nav-link" href="<?php echo e(route('products.index')); ?>">Productos</a>
-                    <a class="nav-link" href="<?php echo e(route('about')); ?>">Sobre nosotros</a>
-                    <a class="nav-link" href="<?php echo e(route('shipping')); ?>">Envío</a>
-                    <a class="nav-link" href="<?php echo e(route('contact')); ?>">Contacto</a>
-                    <a class="nav-link" href="<?php echo e(route('terms')); ?>">Términos</a>
-                </div>
-            </div>
-        </nav>
-
-        <?php
-            $currentPanel = $currentPanel ?? request()->query('panel', 'overview');
-        ?>
-
-        <!-- offcanvas movil --> 
+<?php $__env->startSection('content'); ?>
+        
+        <!-- offcanvas movil -->
         <div class="offcanvas offcanvas-start text-bg-dark account-sidebar-mobile d-md-none"
              tabindex="-1"
              id="accountSidebarMobile"
@@ -101,105 +25,31 @@
             </div>
 
             <div class="offcanvas-body">
-                <ul class="nav flex-column gap-2">
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'overview' ? 'is-current' : ''); ?>"
-                           href="<?php echo e(route('user', ['panel' => 'overview'])); ?>"
-                        >
-                            <span class="me-2">🏠</span> Información general
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'security' ? 'is-current' : ''); ?>"
-                           href="<?php echo e(route('user', ['panel' => 'security'])); ?>"
-                        >
-                            <span class="me-2">🔒</span> Seguridad
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'orders' ? 'is-current' : ''); ?>"
-                           href="<?php echo e(route('user', ['panel' => 'orders'])); ?>"
-                        >
-                            <span class="me-2">🧾</span> Pedidos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'favorites' ? 'is-current' : ''); ?>"
-                           href="<?php echo e(route('user', ['panel' => 'favorites'])); ?>"
-                        >
-                            <span class="me-2">⭐</span> Favoritos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'edit' ? 'is-current' : ''); ?>"
-                           href="<?php echo e(route('user', ['panel' => 'edit'])); ?>"
-                        >
-                            <span class="me-2">✏️</span> Editar perfil
-                        </a>
-                    </li>
-                </ul>
+                <?php echo $__env->make('profile.partials.account-nav-links', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             </div>
         </div>
 
         <div class="container-fluid px-0">
             <div class="row gx-0">
-                <!-- SIDEBAR DE CUENTA (sin bordes redondeados, altura completa) -->
+                
                 <nav class="d-none d-md-block col-md-3 col-lg-2 bg-dark sidebar p-0 account-sidebar">
                     <div class="sidebar-sticky pt-4 px-3">
-                        <ul class="nav flex-column gap-2">
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'overview' ? 'is-current' : ''); ?>"
-                                   href="<?php echo e(route('user', ['panel' => 'overview'])); ?>"
-                                   <?php if($currentPanel === 'overview'): ?> aria-current="page" <?php endif; ?>
-                                >
-                                    <span class="me-2">🏠</span> Información general
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'security' ? 'is-current' : ''); ?>"
-                                   href="<?php echo e(route('user', ['panel' => 'security'])); ?>"
-                                   <?php if($currentPanel === 'security'): ?> aria-current="page" <?php endif; ?>
-                                >
-                                    <span class="me-2">🔒</span> Seguridad
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'orders' ? 'is-current' : ''); ?>"
-                                   href="<?php echo e(route('user', ['panel' => 'orders'])); ?>"
-                                   <?php if($currentPanel === 'orders'): ?> aria-current="page" <?php endif; ?>
-                                >
-                                    <span class="me-2">🧾</span> Pedidos
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'favorites' ? 'is-current' : ''); ?>"
-                                   href="<?php echo e(route('user', ['panel' => 'favorites'])); ?>"
-                                   <?php if($currentPanel === 'favorites'): ?> aria-current="page" <?php endif; ?>
-                                >
-                                    <span class="me-2">⭐</span> Favoritos
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link <?php echo e($currentPanel === 'edit' ? 'is-current' : ''); ?>"
-                                   href="<?php echo e(route('user', ['panel' => 'edit'])); ?>"
-                                   <?php if($currentPanel === 'edit'): ?> aria-current="page" <?php endif; ?>
-                                >
-                                    <span class="me-2">✏️</span> Editar perfil
-                                </a>
-                            </li>
-                        </ul>
+                        <?php echo $__env->make('profile.partials.account-nav-links', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                     </div>
                 </nav>
-                <!-- CONTENIDO PRINCIPAL DE LA CUENTA (a la derecha del sidebar) -->
+                
                 <main class="col-12 col-md-9 col-lg-10 pt-4">
                     <div class="ps-md-5 ps-lg-5 pe-md-4 pe-lg-4">
+                        
                         <?php if(request()->query('verified') === '1' && $currentPanel === 'overview'): ?>
                             <div class="alert alert-success mb-4" role="alert">
                                 Tu correo fue verificado correctamente.
                             </div>
                         <?php endif; ?>
 
+                        
                         <?php if($currentPanel === 'overview'): ?>
+                            
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Información general</h2>
 
@@ -245,6 +95,7 @@
                                 </div>
                             </section>
                         <?php elseif($currentPanel === 'orders'): ?>
+                            
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Pedidos</h2>
 
@@ -281,16 +132,6 @@
                                                             $primaryItem = $order->orderItems->first();
                                                             $primaryProduct = $primaryItem?->product?->name ?? 'Pedido sin productos';
                                                             $remainingItems = max($order->orderItems->count() - 1, 0);
-                                                            $statusLabels = [
-                                                                'completed' => 'Completado',
-                                                                'pending' => 'Pendiente',
-                                                                'cancelled' => 'Cancelado',
-                                                            ];
-                                                            $statusClasses = [
-                                                                'completed' => 'text-success',
-                                                                'pending' => 'text-warning-emphasis',
-                                                                'cancelled' => 'text-danger',
-                                                            ];
                                                         ?>
                                                         <tr>
                                                             <td><?php echo e($order->created_at->format('d/m/Y H:i')); ?></td>
@@ -328,6 +169,7 @@
                                 </div>
                             </section>
                         <?php elseif($currentPanel === 'favorites'): ?>
+                            
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Favoritos</h2>
 
@@ -400,6 +242,7 @@
                                 </div>
                             </section>
                         <?php elseif($currentPanel === 'edit'): ?>
+                            
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Editar perfil</h2>
 
@@ -495,6 +338,7 @@ unset($__errorArgs, $__bag); ?>
                                 </div>
                             </section>
                         <?php elseif($currentPanel === 'security'): ?>
+                            
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Seguridad</h2>
 
@@ -629,36 +473,11 @@ unset($__errorArgs, $__bag); ?>
                         <?php endif; ?>
                     </div>
 
-                    <footer class="bg-black text-white py-4 mt-4">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h5>Sobre nosotros</h5>
-                                    <p>Jurassic Store trae la emoción prehistórica a la vida con nuestra exclusiva colección de dinosaurios.</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <h5>Enlaces</h5>
-                                    <ul class="list-unstyled">
-                                        <li><a href="<?php echo e(route('about')); ?>" class="text-white-50">Sobre nosotros</a></li>
-                                        <li><a href="<?php echo e(route('contact')); ?>" class="text-white-50">Contacto</a></li>
-                                        <li><a class="text-white-50">Política de privacidad</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-4">
-                                    <h5>Síguenos</h5>
-                                    <p class="text-white-50">¡Mantente actualizado con nuestros últimos descubrimientos de dinosaurios!</p>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="text-center text-white-50">
-                                <p>&copy; 2026 Jurassic Store. Todos los derechos reservados.</p>
-                            </div>
-                        </div>
-                    </footer>
                 </main>
             </div>
         </div>
 
+        
         <div class="modal fade"
              id="deleteAccountModal"
              tabindex="-1"
@@ -718,21 +537,22 @@ unset($__errorArgs, $__bag); ?>
             </div>
         </div>
 
-        <?php if($errors->userDeletion->isNotEmpty()): ?>
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const deleteAccountModalElement = document.getElementById('deleteAccountModal');
+<?php $__env->stopSection(); ?>
 
-                    if (deleteAccountModalElement) {
-                        const deleteAccountModal = new bootstrap.Modal(deleteAccountModalElement);
-                        deleteAccountModal.show();
-                    }
-                });
-            </script>
-        <?php endif; ?>
 
-        <script src="<?php echo e(asset('vendor/bootstrap/js/bootstrap.bundle.min.js')); ?>"></script>
-    </body>
-</html>
+<?php if($errors->userDeletion->isNotEmpty()): ?>
+    <?php $__env->startPush('scripts'); ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const deleteAccountModalElement = document.getElementById('deleteAccountModal');
 
-<?php /**PATH C:\Users\ianiv\Herd\iniciativa-dinosaurios\resources\views/profile/user.blade.php ENDPATH**/ ?>
+                if (deleteAccountModalElement) {
+                    const deleteAccountModal = new bootstrap.Modal(deleteAccountModalElement);
+                    deleteAccountModal.show();
+                }
+            });
+        </script>
+    <?php $__env->stopPush(); ?>
+<?php endif; ?>
+
+<?php echo $__env->make('layouts.account', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\ianiv\Herd\iniciativa-dinosaurios\resources\views/profile/user.blade.php ENDPATH**/ ?>

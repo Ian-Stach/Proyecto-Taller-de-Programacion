@@ -7,11 +7,41 @@ use App\Models\Favorite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/*
+ * FavoriteController
+ * -------------------
+ * Gestiona la lista de favoritos de cada usuario autenticado.
+ * Los favoritos se guardan en la tabla 'favorites' (user_id, product_id).
+ *
+ * Rutas (middleware 'auth' en routes/web.php):
+ *   GET    /favorites             → index()   → lista de favoritos del usuario
+ *   POST   /favorites/{product}   → store()   → agrega a favoritos
+ *   DELETE /favorites/{product}   → destroy() → elimina de favoritos
+ *
+ * store() y destroy() soportan dos modos de respuesta:
+ *   • AJAX / expectsJson() → devuelve JSON con el nuevo estado y las URLs de ambas acciones.
+ *     El JS en la tarjeta de producto usa esas URLs para actualizar el form del corazón
+ *     sin recargar la página (toggle visual del ícono).
+ *   • Petición normal (form tradicional) → redirige con flash success/info.
+ */
 class FavoriteController extends Controller
 {
     /**
      * Agregar producto a favoritos
      * POST /favorites/{product}
+     *
+     * Antes de crear, verifica si ya existe el favorito para el usuario actual.
+     * Si ya existe:
+     *   - AJAX → devuelve JSON con favorited:true y mensaje informativo (no es un error,
+     *     el estado final es el deseado).
+     *   - Normal → redirige con flash 'info'.
+     *
+     * Si no existe, crea el registro Favorite con user_id y product_id.
+     * Auth::id() es más eficiente que Auth::user()->id porque no carga el modelo
+     * completo del usuario si no estaba ya en memoria.
+     *
+     * La respuesta JSON incluye ambas URLs (add y remove) para que el JS pueda
+     * actualizar el action del formulario del corazón al nuevo estado opuesto.
      */
     public function store(Request $request, Product $product)
     {
@@ -60,6 +90,13 @@ class FavoriteController extends Controller
     /**
      * Remover producto de favoritos
      * DELETE /favorites/{product}
+     *
+     * Usa delete() directamente en el query builder (sin cargar el modelo primero)
+     * para eliminar en una sola query. Si el registro no existía, delete() no
+     * falla — simplemente no elimina nada, lo que es el estado correcto.
+     *
+     * La respuesta JSON devuelve favorited:false para que el JS actualice el ícono
+     * del corazón al estado "no favorito".
      */
     public function destroy(Request $request, Product $product)
     {
@@ -85,6 +122,10 @@ class FavoriteController extends Controller
     /**
      * Listar favoritos del usuario
      * GET /favorites
+     *
+     * Carga la relación 'product.categories' con eager loading para evitar N+1
+     * al renderizar la grilla (cada tarjeta muestra categorías del producto).
+     * Pagina a 12 por página, igual que el catálogo de productos.
      */
     public function index()
     {

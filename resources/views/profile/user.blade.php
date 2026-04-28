@@ -1,83 +1,51 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>JURASSIC STORE</title>
-        <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/estilos.css') }}">
-    </head>
+{{--
+    VISTA: profile/user
+    ─────────────────────────────────────────────────────────────────────────────
+    Dashboard de cuenta del usuario autenticado. Extiende layouts/account,
+    que provee el <head>, el header negro con avatar, la barra de navegación
+    amarilla, el footer y el @stack('scripts').
 
-    <body>
-        <!-- HEADER MINIMALISTA PARA USER -->
-        <header class="navbar navbar-expand-lg navbar-dark bg-black header-tall user-account-header">
-            <div class="container-fluid user-account-header-bar">
-                <div class="user-account-brand">
-                    <button class="navbar-toggler d-md-none account-menu-toggle"
-                            type="button"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#accountSidebarMobile"
-                            aria-controls="accountSidebarMobile"
-                            aria-label="Abrir menú de cuenta"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <a href="{{ route('home') }}"
-                       class="d-inline-flex align-items-center"
-                    >
-                        <img src="{{asset('images/jp_logo.jpg') }}"
-                             alt="logo"
-                             width="60"
-                             height="40"
-                             class="d-inline-block align-text-top"
-                        >
-                    </a>
+    Sistema de paneles:
+      La vista no tiene URL propia por panel; en cambio, usa un único parámetro
+      ?panel= en la query string para decidir qué sección mostrar.
+      El controlador (ProfileController@show) recibe, valida y normaliza ese
+      parámetro antes de inyectarlo aquí como $currentPanel.
 
-                    <a class="navbar-brand navbar-brand-custom navbar-brand-large mb-0 d-none d-md-inline-block"
-                       href="{{ route('home') }}"
-                    >Jurassic Store
-                    </a>
-                </div>
+    Paneles disponibles:
+      overview   → resumen de cuenta (nombre, email, estado de verificación)
+      orders     → tabla paginada de pedidos con búsqueda
+      favorites  → tabla paginada de favoritos con búsqueda
+      edit       → formulario PATCH de nombre y email
+      security   → formulario PUT de contraseña + zona de eliminación de cuenta
 
-                <div class="user-account-summary d-none d-md-flex">
-                    <div class="user-account-meta">
-                        <div class="user-account-name">{{ Auth::user()->name }}</div>
-                        <div class="user-account-email">{{ Auth::user()->email }}</div>
-                    </div>
-                    <div class="user-account-avatar">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </div>
-                </div>
+    Variables inyectadas por el controlador:
+      $currentPanel    → panel activo validado ('overview' por defecto)
+      $orders          → LengthAwarePaginator|null (solo si panel=orders)
+      $ordersSearch    → string de búsqueda de pedidos
+      $favorites       → LengthAwarePaginator|null (solo si panel=favorites)
+      $favoritesSearch → string de búsqueda de favoritos
+      $statusLabels    → array status → etiqueta legible para pedidos
+      $statusClasses   → array status → clase CSS de color para pedidos
 
-                <a href="{{ route('user') }}"
-                   class="d-flex d-md-none user-account-mobile-avatar-link"
-                   aria-label="Mi cuenta"
-                >
-                    <div class="user-account-avatar">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </div>
-                </a>
-            </div>
-        </header>
+    Estructura en orden de renderizado:
+      1. offcanvas mobile  → sidebar de navegación para pantallas pequeñas
+      2. sidebar desktop   → columna de navegación fija (d-none d-md-block)
+      3. main              → panel activo según $currentPanel
+      4. modal             → confirmación de eliminación de cuenta (panel security)
+      5. @push('scripts') → script de apertura automática del modal si hay errores
+    ─────────────────────────────────────────────────────────────────────────────
+--}}
+@extends('layouts.account')
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-warning navbar-short">
-            <div class="container-fluid">
-                <div class="user-account-top-links d-flex flex-wrap gap-2 align-items-center justify-content-center w-100">
-                    <a class="nav-link" href="{{ route('home') }}">Inicio</a>
-                    <a class="nav-link" href="{{ route('products.index') }}">Productos</a>
-                    <a class="nav-link" href="{{ route('about') }}">Sobre nosotros</a>
-                    <a class="nav-link" href="{{ route('shipping') }}">Envío</a>
-                    <a class="nav-link" href="{{ route('contact') }}">Contacto</a>
-                    <a class="nav-link" href="{{ route('terms') }}">Términos</a>
-                </div>
-            </div>
-        </nav>
-
-        @php
-            $currentPanel = $currentPanel ?? request()->query('panel', 'overview');
-        @endphp
-
-        <!-- offcanvas movil --> 
+@section('content')
+        {{--
+            OFFCANVAS MOBILE
+            Panel lateral deslizante que aparece en pantallas pequeñas (< md).
+            Se activa desde el botón hamburguesa del header del layout.
+            Contiene el email del usuario como identificación y el menú de
+            navegación compartido con el sidebar desktop via @include.
+        --}}
+        <!-- offcanvas movil -->
         <div class="offcanvas offcanvas-start text-bg-dark account-sidebar-mobile d-md-none"
              tabindex="-1"
              id="accountSidebarMobile"
@@ -99,105 +67,52 @@
             </div>
 
             <div class="offcanvas-body">
-                <ul class="nav flex-column gap-2">
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'overview' ? 'is-current' : '' }}"
-                           href="{{ route('user', ['panel' => 'overview']) }}"
-                        >
-                            <span class="me-2">🏠</span> Información general
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'security' ? 'is-current' : '' }}"
-                           href="{{ route('user', ['panel' => 'security']) }}"
-                        >
-                            <span class="me-2">🔒</span> Seguridad
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'orders' ? 'is-current' : '' }}"
-                           href="{{ route('user', ['panel' => 'orders']) }}"
-                        >
-                            <span class="me-2">🧾</span> Pedidos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'favorites' ? 'is-current' : '' }}"
-                           href="{{ route('user', ['panel' => 'favorites']) }}"
-                        >
-                            <span class="me-2">⭐</span> Favoritos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link sidebar-account-link {{ $currentPanel === 'edit' ? 'is-current' : '' }}"
-                           href="{{ route('user', ['panel' => 'edit']) }}"
-                        >
-                            <span class="me-2">✏️</span> Editar perfil
-                        </a>
-                    </li>
-                </ul>
+                @include('profile.partials.account-nav-links')
             </div>
         </div>
 
         <div class="container-fluid px-0">
             <div class="row gx-0">
-                <!-- SIDEBAR DE CUENTA (sin bordes redondeados, altura completa) -->
+                {{--
+                    SIDEBAR DESKTOP
+                    Columna de navegación fija visible solo en pantallas medianas y
+                    grandes (d-none d-md-block). Ocupa 3 columnas en md y 2 en lg.
+                    Comparte los links con el offcanvas mobile mediante el mismo
+                    @include, garantizando que ambos siempre estén sincronizados.
+                    → resources/views/profile/partials/account-nav-links.blade.php
+                --}}
                 <nav class="d-none d-md-block col-md-3 col-lg-2 bg-dark sidebar p-0 account-sidebar">
                     <div class="sidebar-sticky pt-4 px-3">
-                        <ul class="nav flex-column gap-2">
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link {{ $currentPanel === 'overview' ? 'is-current' : '' }}"
-                                   href="{{ route('user', ['panel' => 'overview']) }}"
-                                   @if ($currentPanel === 'overview') aria-current="page" @endif
-                                >
-                                    <span class="me-2">🏠</span> Información general
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link {{ $currentPanel === 'security' ? 'is-current' : '' }}"
-                                   href="{{ route('user', ['panel' => 'security']) }}"
-                                   @if ($currentPanel === 'security') aria-current="page" @endif
-                                >
-                                    <span class="me-2">🔒</span> Seguridad
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link {{ $currentPanel === 'orders' ? 'is-current' : '' }}"
-                                   href="{{ route('user', ['panel' => 'orders']) }}"
-                                   @if ($currentPanel === 'orders') aria-current="page" @endif
-                                >
-                                    <span class="me-2">🧾</span> Pedidos
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link {{ $currentPanel === 'favorites' ? 'is-current' : '' }}"
-                                   href="{{ route('user', ['panel' => 'favorites']) }}"
-                                   @if ($currentPanel === 'favorites') aria-current="page" @endif
-                                >
-                                    <span class="me-2">⭐</span> Favoritos
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link sidebar-account-link {{ $currentPanel === 'edit' ? 'is-current' : '' }}"
-                                   href="{{ route('user', ['panel' => 'edit']) }}"
-                                   @if ($currentPanel === 'edit') aria-current="page" @endif
-                                >
-                                    <span class="me-2">✏️</span> Editar perfil
-                                </a>
-                            </li>
-                        </ul>
+                        @include('profile.partials.account-nav-links')
                     </div>
                 </nav>
-                <!-- CONTENIDO PRINCIPAL DE LA CUENTA (a la derecha del sidebar) -->
+                {{--
+                    ÁREA DE CONTENIDO PRINCIPAL
+                    Ocupa el espacio restante junto al sidebar (9/12 en md, 10/12 en lg).
+                    Contiene el panel activo según $currentPanel y el padding lateral
+                    que separa el contenido del sidebar.
+                --}}
                 <main class="col-12 col-md-9 col-lg-10 pt-4">
                     <div class="ps-md-5 ps-lg-5 pe-md-4 pe-lg-4">
+                        {{--
+                            Alerta de verificación de correo exitosa.
+                            Se muestra solo cuando Laravel redirige con ?verified=1
+                            tras confirmar el email, y únicamente en el panel overview.
+                        --}}
                         @if (request()->query('verified') === '1' && $currentPanel === 'overview')
                             <div class="alert alert-success mb-4" role="alert">
                                 Tu correo fue verificado correctamente.
                             </div>
                         @endif
 
+                        {{--
+                            SISTEMA DE PANELES
+                            Un único bloque @if/@elseif renderiza solo el panel activo.
+                            El controlador garantiza que $currentPanel siempre sea uno
+                            de los cinco valores válidos, por lo que no hay @else final.
+                        --}}
                         @if ($currentPanel === 'overview')
+                            {{-- PANEL: Información general — nombre, email, estado del correo y logout --}}
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Información general</h2>
 
@@ -242,6 +157,14 @@
                                 </div>
                             </section>
                         @elseif ($currentPanel === 'orders')
+                            {{--
+                                PANEL: Pedidos
+                                Tabla paginada (8 por página) con búsqueda por ID o nombre de producto.
+                                $primaryProduct muestra el primer ítem del pedido; si hay más,
+                                se indica con "+ N producto(s) más".
+                                $statusLabels y $statusClasses vienen del controlador y se aplican
+                                por cada fila sin recalcularse en el loop.
+                            --}}
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Pedidos</h2>
 
@@ -278,16 +201,6 @@
                                                             $primaryItem = $order->orderItems->first();
                                                             $primaryProduct = $primaryItem?->product?->name ?? 'Pedido sin productos';
                                                             $remainingItems = max($order->orderItems->count() - 1, 0);
-                                                            $statusLabels = [
-                                                                'completed' => 'Completado',
-                                                                'pending' => 'Pendiente',
-                                                                'cancelled' => 'Cancelado',
-                                                            ];
-                                                            $statusClasses = [
-                                                                'completed' => 'text-success',
-                                                                'pending' => 'text-warning-emphasis',
-                                                                'cancelled' => 'text-danger',
-                                                            ];
                                                         @endphp
                                                         <tr>
                                                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
@@ -322,6 +235,14 @@
                                 </div>
                             </section>
                         @elseif ($currentPanel === 'favorites')
+                            {{--
+                                PANEL: Favoritos
+                                Tabla paginada (8 por página) con búsqueda por nombre de producto.
+                                $categoryLabel usa deepestCategories() del modelo Product, que devuelve
+                                solo las categorías hoja (más específicas) sin hacer queries extra
+                                gracias al eager loading 'product.categories' del controlador.
+                                El botón "Quitar" envía DELETE a favorites.remove.
+                            --}}
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Favoritos</h2>
 
@@ -392,6 +313,11 @@
                                 </div>
                             </section>
                         @elseif ($currentPanel === 'edit')
+                            {{--
+                                PANEL: Editar perfil
+                                Formulario PATCH a profile.update para actualizar nombre y email.
+                                Usa old() para repoblar los campos si la validación falla.
+                            --}}
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Editar perfil</h2>
 
@@ -459,6 +385,12 @@
                                 </div>
                             </section>
                         @elseif ($currentPanel === 'security')
+                            {{--
+                                PANEL: Seguridad
+                                Formulario PUT a password.update con error bag 'updatePassword'.
+                                Incluye la zona de eliminación de cuenta, que abre el modal
+                                #deleteAccountModal definido al final de esta sección.
+                            --}}
                             <section class="account-user-section mb-4">
                                 <h2 class="mb-4 static-page-title">Seguridad</h2>
 
@@ -551,36 +483,19 @@
                         @endif
                     </div>
 
-                    <footer class="bg-black text-white py-4 mt-4">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h5>Sobre nosotros</h5>
-                                    <p>Jurassic Store trae la emoción prehistórica a la vida con nuestra exclusiva colección de dinosaurios.</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <h5>Enlaces</h5>
-                                    <ul class="list-unstyled">
-                                        <li><a href="{{ route('about') }}" class="text-white-50">Sobre nosotros</a></li>
-                                        <li><a href="{{ route('contact') }}" class="text-white-50">Contacto</a></li>
-                                        <li><a class="text-white-50">Política de privacidad</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-4">
-                                    <h5>Síguenos</h5>
-                                    <p class="text-white-50">¡Mantente actualizado con nuestros últimos descubrimientos de dinosaurios!</p>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="text-center text-white-50">
-                                <p>&copy; 2026 Jurassic Store. Todos los derechos reservados.</p>
-                            </div>
-                        </div>
-                    </footer>
                 </main>
             </div>
         </div>
 
+        {{--
+            MODAL DE ELIMINACIÓN DE CUENTA
+            Se renderiza siempre en el DOM pero solo es visible desde el panel
+            'security' (el botón que lo abre está dentro de ese panel).
+            Requiere la contraseña actual para confirmar la acción.
+            Usa el error bag 'userDeletion' para mostrar errores de validación.
+            Si hay errores en ese bag, el @push('scripts') al final lo abre
+            automáticamente al cargar la página.
+        --}}
         <div class="modal fade"
              id="deleteAccountModal"
              tabindex="-1"
@@ -626,20 +541,26 @@
             </div>
         </div>
 
-        @if ($errors->userDeletion->isNotEmpty())
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const deleteAccountModalElement = document.getElementById('deleteAccountModal');
+@endsection
 
-                    if (deleteAccountModalElement) {
-                        const deleteAccountModal = new bootstrap.Modal(deleteAccountModalElement);
-                        deleteAccountModal.show();
-                    }
-                });
-            </script>
-        @endif
+{{--
+    Si la eliminación de cuenta falló por validación, el controlador redirige
+    de vuelta con los errores en el bag 'userDeletion'. Este script reabre el
+    modal automáticamente para que el usuario vea el mensaje de error sin tener
+    que hacer clic de nuevo en el botón.
+    Se coloca en @push('scripts') para ejecutarse después de Bootstrap JS.
+--}}
+@if ($errors->userDeletion->isNotEmpty())
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const deleteAccountModalElement = document.getElementById('deleteAccountModal');
 
-        <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    </body>
-</html>
-
+                if (deleteAccountModalElement) {
+                    const deleteAccountModal = new bootstrap.Modal(deleteAccountModalElement);
+                    deleteAccountModal.show();
+                }
+            });
+        </script>
+    @endpush
+@endif

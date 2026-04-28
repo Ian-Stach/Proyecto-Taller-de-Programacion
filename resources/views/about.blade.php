@@ -1,7 +1,23 @@
+{{--
+    VISTA: about
+    ─────────────────────────────────────────────────────────────────────────────
+    Página "Quiénes Somos" del sitio Jurassic Store. Es una vista estática,
+    sin variables inyectadas por el controlador (se sirve directamente con
+    Route::view('/about', 'about') en routes/web.php).
+
+    Estructura de secciones:
+      1. Historia       → texto + círculo decorativo amarillo
+      2. Misión/Visión/Valores → tres cards iguales en altura (h-100)
+      3. Nuestro Equipo → cuatro integrantes en grilla 2×2
+      4. ¿Por qué elegirnos? → dos columnas de listas
+      5. CTA            → botón al catálogo de productos
+    ─────────────────────────────────────────────────────────────────────────────
+--}}
 @extends('layouts.Jurassic_Store')
 
 @section('content')
 <div class="container my-5">
+    {{-- Encabezado de página --}}
     <div class="row mb-5">
         <div class="col-md-12">
             <h1 class="display-4 mb-4 static-page-title">🦕 Quiénes Somos</h1>
@@ -9,6 +25,13 @@
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 1: Historia
+         Columna izquierda (8/12): texto descriptivo de la empresa.
+         Columna derecha (4/12): círculo decorativo amarillo centrado
+         verticalmente respecto al bloque de texto, con borde negro.
+         border-radius: 50% convierte el div cuadrado en un círculo.
+    ========================================================= --}}
     <!-- Historia de la Empresa -->
     <div class="row mb-5">
         <div class="col-md-8">
@@ -26,23 +49,32 @@
                 de todo el mundo puedan ser parte de este increíble viaje a través del tiempo.
             </p>
         </div>
-        <div class="col-md-4">
-            <div class="card bg-warning text-dark">
-                <div class="card-body text-center">
-                    <h3 class="about-highlight-icon">🧬</h3>
-                    <h5 class="card-title">Tecnología de clase mundial</h5>
-                    <p class="card-text">Utilizamos tecnología genética de punta para recrear especies extintas con precisión científica.</p>
-                </div>
+        <div class="col-md-4 d-flex align-items-center justify-content-center">
+            <div class="bg-warning text-dark d-flex flex-column align-items-center justify-content-center text-center p-4"
+                 style="width: 260px; height: 260px; border-radius: 50%; border: 3px solid black;"
+            >
+                <div class="fs-1 mb-2">🧬</div>
+                <h6 class="fw-bold mb-2">Tecnología de clase mundial</h6>
+                <p class="mb-0">Tecnología genética de punta para recrear especies extintas con precisión científica.</p>
             </div>
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 2: Misión, Visión, Valores
+         Tres cards en columnas de igual ancho (col-md-4).
+         h-100 hace que cada card se estire hasta la altura máxima
+         de la fila (determinada por la card con más contenido),
+         consiguiendo altura uniforme sin CSS personalizado.
+         border-warning + card-header bg-warning → paleta amarilla
+         coherente con la identidad visual del sitio.
+    ========================================================= --}}
     <!-- Misión, Visión, Valores -->
     <div class="row mb-5">
         <div class="col-md-4">
-            <div class="card border-warning mb-3">
-                <div class="card-header bg-warning text-dark">
-                    <h4>🎯 Misión</h4>
+            <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h4>Misión</h4>
                 </div>
                 <div class="card-body">
                     <p>
@@ -54,9 +86,9 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border-warning mb-3">
-                <div class="card-header bg-warning text-dark">
-                    <h4>🔭 Visión</h4>
+            <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h4>Visión</h4>
                 </div>
                 <div class="card-body">
                     <p>
@@ -68,9 +100,9 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border-warning mb-3">
-                <div class="card-header bg-warning text-dark">
-                    <h4>⭐ Valores</h4>
+            <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h4>Valores</h4>
                 </div>
                 <div class="card-body">
                     <p>
@@ -84,6 +116,12 @@
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 3: Equipo
+         Grilla 2×2 con col-md-6. Cada card muestra nombre, cargo
+         y descripción del integrante. mb-4 en la columna (no en la
+         card) separa las filas verticalmente.
+    ========================================================= --}}
     <!-- Equipo -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -94,7 +132,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Dr. Alan Grant 👨‍🔬</h5>
-                    <p class="card-text"><strong>Director General & Paleontólogo</strong></p>
+                    <p class="card-text"><strong>Director General &amp; Paleontólogo</strong></p>
                     <p class="text-muted">
                         Con 30 años de experiencia en paleontología, el Dr. Grant lidera nuestra visión de traer el pasado al presente. 
                         Doctorado en Paleontología por las mejores universidades del mundo.
@@ -107,7 +145,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Dra. Ellie Sattler 👩‍🔬</h5>
-                    <p class="card-text"><strong>Jefa de Investigación & Genetista</strong></p>
+                    <p class="card-text"><strong>Jefa de Investigación &amp; Genetista</strong></p>
                     <p class="text-muted">
                         Especialista en ingeniería genética con más de 25 años en el campo. La Dra. Sattler supervisa todos nuestros proyectos 
                         de recreación genética para garantizar máxima calidad.
@@ -132,10 +170,10 @@
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Tim Murphy 👨‍💻</h5>
+                    <h5 class="card-title">Dennis Nedry 👨‍💻</h5>
                     <p class="card-text"><strong>Director de Tecnología</strong></p>
                     <p class="text-muted">
-                        Líder en desarrollo de plataformas digitales y logística. Tim mantiene nuestro sistema funcionando sin interrupciones 
+                        Líder en desarrollo de plataformas digitales y logística. Dennis mantiene nuestro sistema funcionando sin interrupciones
                         24/7 para servir a clientes en todo el mundo.
                     </p>
                 </div>
@@ -143,6 +181,12 @@
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 4: ¿Por qué elegirnos?
+         Dos columnas de listas (list-group-flush elimina bordes
+         laterales y el borde exterior del grupo), cada una con
+         cuatro puntos de valor de la empresa.
+    ========================================================= --}}
     <!-- Por qué elegir Jurassic Store -->
     <div class="row">
         <div class="col-md-12">
@@ -166,6 +210,7 @@
         </div>
     </div>
 
+    {{-- CTA: enlace al catálogo de productos --}}
     <div class="mt-5 text-center">
         <a href="{{ route('products.index') }}" class="btn btn-warning btn-lg">
             🦕 Ver Nuestro Catálogo

@@ -1,7 +1,31 @@
+{{--
+    VISTA: contact.blade.php
+    Descripción: Página de contacto de Jurassic Store.
+    Permite al usuario comunicarse con el equipo mediante un formulario,
+    consultar información de contacto (dirección, teléfono, email),
+    ver la ubicación en el mapa y revisar las preguntas frecuentes.
+
+    Estructura:
+    1. Cabecera      — Título principal y subtítulo
+    2. Info contacto — Tres tarjetas: Dirección, Teléfono, Email
+    3. Ubicación     — Mapa embebido de Google Maps (Isla Nublar)
+    4. Formulario    — Form POST con CSRF, validación y 6 campos + checkbox
+    5. FAQ           — Acordeón Bootstrap con 4 preguntas frecuentes
+
+    Rutas relacionadas:
+    - GET  /contact          → muestra esta vista (ContactController@show)
+    - POST /contact          → procesa el formulario (ContactController@store)
+    - GET  /terms            → enlazada desde el checkbox de T&C
+--}}
 @extends('layouts.Jurassic_Store')
 
 @section('content')
 <div class="container my-5">
+
+    {{-- ================================================================
+         SECCIÓN 1: CABECERA
+         Título h1 de la página, bajada y separador visual.
+    ================================================================ --}}
     <div class="row mb-5">
         <div class="col-md-12">
             <h1 class="display-4 mb-4 static-page-title">📞 Contacto</h1>
@@ -10,34 +34,42 @@
         </div>
     </div>
 
+    {{-- ================================================================
+         SECCIÓN 2: TARJETAS DE INFORMACIÓN DE CONTACTO
+         Tres tarjetas con borde amarillo (border-warning) en fila.
+         h-100 garantiza que todas tengan la misma altura.
+         Contenidos: Dirección física, Teléfono (+1-800-DINOLAB) y Email.
+    ================================================================ --}}
     <!-- Información de Contacto -->
     <div class="row mb-5">
         <div class="col-md-4 mb-4">
-            <div class="card border-warning">
+            <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5>📍 Dirección</h5>
                 </div>
                 <div class="card-body">
                     <p>
                         <strong>Jurassic Store International</strong><br>
-                        Mesozoic Avenue 2026<br>
-                        Dinosaur City<br>
-                        Global District 90210
+                        Complejo Central Jurassic Store<br>
+                        Bahía Suroeste, Isla Nublar<br>
+                        Costa Rica
                     </p>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4 mb-4">
-            <div class="card border-warning">
+            <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5>☎️ Teléfono</h5>
                 </div>
                 <div class="card-body">
-                    <p>
+                    <p class="mb-1">
                         <strong>Línea Principal:</strong><br>
-                        +1-800-DINOSAUR<br>
-                        (1-800-346-6278)<br><br>
+                        +1-800-DINOLAB<br>
+                        (1-800-346-6522)
+                    </p>
+                    <p class="mb-0">
                         <strong>Disponible:</strong> 24/7
                     </p>
                 </div>
@@ -45,14 +77,16 @@
         </div>
 
         <div class="col-md-4 mb-4">
-            <div class="card border-warning">
+            <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5>✉️ Email</h5>
                 </div>
                 <div class="card-body">
-                    <p>
+                    <p class="mb-1">
                         <strong>Soporte General:</strong><br>
-                        support@jurassicstore.com<br><br>
+                        support@jurassicstore.com
+                    </p>
+                    <p class="mb-0">
                         <strong>Ventas:</strong><br>
                         sales@jurassicstore.com
                     </p>
@@ -61,24 +95,43 @@
         </div>
     </div>
 
-    <!-- Redes Sociales -->
+    {{-- ================================================================
+         SECCIÓN 3: MAPA DE UBICACIÓN
+         Iframe de Google Maps embebido (sin API key).
+         Apunta a Isla Nublar en el Océano Pacífico, Costa Rica.
+         El card ocupa el ancho completo (col-md-12) con p-0 en card-body
+         para que el mapa llegue hasta los bordes del contenedor.
+    ================================================================ --}}
+    <!-- Ubicación -->
     <div class="row mb-5">
         <div class="col-md-12">
-            <div class="card bg-light">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Síguenos en Redes Sociales</h5>
-                    <p class="mb-3">Mantente actualizado con noticias y promociones</p>
-                    <div class="btn-group" role="group">
-                        <a href="#" class="btn btn-outline-primary">Facebook</a>
-                        <a href="#" class="btn btn-outline-info">Twitter</a>
-                        <a href="#" class="btn btn-outline-danger">Instagram</a>
-                        <a href="#" class="btn btn-outline-secondary">LinkedIn</a>
-                    </div>
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5>🗺️ Nuestra Ubicación — Isla Nublar, Costa Rica</h5>
+                </div>
+                <div class="card-body p-0">
+                    <iframe src="https://maps.google.com/maps?q=5.5167,-87.0667&z=11&output=embed"
+                            width="100%"
+                            height="450"
+                            style="border:0; display:block;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Ubicación de Isla Nublar en el Océano Pacífico, Costa Rica"
+                    ></iframe>
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- ================================================================
+         SECCIÓN 4: FORMULARIO DE CONTACTO
+         Formulario POST con protección CSRF.
+         Centrado en col-md-8 offset-md-2.
+         Campos: Nombre, Email, Teléfono, Asunto (select), Mensaje, T&C.
+         Muestra errores de validación del servidor (@error / $errors).
+         Muestra mensaje de éxito de sesión si el envío fue exitoso.
+    ================================================================ --}}
     <!-- Formulario de Contacto -->
     <div class="row mb-5">
         <div class="col-md-8 offset-md-2">
@@ -176,6 +229,13 @@
         </div>
     </div>
 
+    {{-- ================================================================
+         SECCIÓN 5: PREGUNTAS FRECUENTES (FAQ)
+         Acordeón Bootstrap (#faqAccordion) con 4 ítems.
+         Todos los ítems arrancan colapsados (clase 'collapsed' en button).
+         Separado del formulario con border-top, mt-5 y pt-5.
+         Preguntas: tiempos de entrega, garantía, legalidad, capacitación.
+    ================================================================ --}}
     <!-- FAQ -->
     <div class="row mt-5 pt-5 border-top">
         <div class="col-md-12">
@@ -186,13 +246,13 @@
             <div class="accordion" id="faqAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
                             ¿Cuánto tiempo tarda en llegar mi dinosaurio?
                         </button>
                     </h2>
                     <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Depende de la opción de envío que elijas. Estándar: 7-10 días, Expressa: 3-5 días, VIP: 1-2 días
+                            Depende de la opción de envío que elijas. Estándar: 7-10 días, Expresa: 3-5 días, VIP: 1-2 días
                         </div>
                     </div>
                 </div>

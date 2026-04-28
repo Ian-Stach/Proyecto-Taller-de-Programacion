@@ -4,6 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/*
+ * Migración: create_users_table
+ * --------------------------------
+ * Crea las tres tablas de autenticación base de Laravel:
+ *
+ *   users                 → Usuarios registrados en la aplicación.
+ *   password_reset_tokens → Tokens para el flujo de restablecimiento de contraseña.
+ *   sessions              → Sesiones de usuario almacenadas en BD (driver 'database').
+ *
+ * Esta migración se ejecuta PRIMERO (prefijo 000000) porque todas las demás
+ * tablas con user_id dependen de 'users'.
+ */
+
 return new class extends Migration
 {
     /**
@@ -14,25 +27,32 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->unique(); // El email es el identificador de login; debe ser único
+            // nullable() → permite usuarios que aún no han verificado su email
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password'); // Almacenado como hash bcrypt (nunca texto plano)
+            // rememberToken() → agrega la columna 'remember_token' VARCHAR(100) NULL
+            // usada cuando el usuario elige "Recordarme" al iniciar sesión
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
+            // email como clave primaria → un solo token de reset por email a la vez
             $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
+            $table->string('token'); // Hash del token enviado por email (nunca el token en claro)
+            $table->timestamp('created_at')->nullable(); // Para expirar tokens viejos
         });
 
         Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->string('id')->primary(); // ID de sesión alfanumérico generado por PHP
+            // nullable() → sesiones de visitantes anónimos no tienen user_id
             $table->foreignId('user_id')->nullable()->index();
+            // varchar(45) → soporta IPv4 (max 15 chars), IPv6 (max 39 chars) y mapeos IPv4-en-IPv6
             $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
+            $table->text('user_agent')->nullable(); // Cadena del navegador/cliente
+            $table->longText('payload'); // Datos de sesión serializados (potencialmente grandes)
+            // integer en lugar de timestamp → Unix timestamp; indexado para limpiar sesiones expiradas
             $table->integer('last_activity')->index();
         });
     }

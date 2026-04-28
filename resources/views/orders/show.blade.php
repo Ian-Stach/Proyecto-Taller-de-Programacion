@@ -20,7 +20,7 @@
     <!-- Información del pedido -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="card">
+            <div class="card h-100">
                 <div class="card-header bg-warning">
                     <strong>Información del pedido</strong>
                 </div>
@@ -42,7 +42,7 @@
         @endphp
 
         <div class="col-md-6">
-            <div class="card">
+            <div class="card h-100">
                 <div class="card-header bg-warning">
                     <strong>Total del pedido</strong>
                 </div>

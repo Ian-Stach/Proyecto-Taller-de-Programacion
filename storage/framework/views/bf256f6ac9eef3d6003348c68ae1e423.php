@@ -1,5 +1,6 @@
 
 
+
 <?php $__env->startSection('content'); ?>
 <div class="container my-5">
     <div class="row mb-5">
@@ -10,23 +11,24 @@
         </div>
     </div>
 
+    
     <!-- Información Legal -->
     <div class="row mb-5">
         <div class="col-md-12">
             <h2 class="mb-4">📋 Información Legal de la Empresa</h2>
-            <div class="card">
+            <div class="card border-warning">
                 <div class="card-body">
                     <p><strong>Titular/Razón Social:</strong> Jurassic Store International S.A.</p>
-                    <p><strong>Domicilio Legal:</strong> Mesozoic Avenue 2026, Dinosaur City, Global District 90210</p>
-                    <p><strong>Teléfono:</strong> +1-800-DINOSAUR (1-800-346-6278)</p>
+                    <p><strong>Domicilio Legal:</strong> Complejo Central Jurassic Store, Bahía Suroeste, Isla Nublar, Costa Rica</p>
+                    <p><strong>Teléfono:</strong> +1-800-DINOLAB (1-800-346-6522)</p>
                     <p><strong>Email:</strong> legal@jurassicstore.com</p>
-                    <p><strong>RFC/TAX ID:</strong> JSI-2026-000001</p>
                     <p class="mb-0"><strong>Registrado en:</strong> Registro de Comercio Internacional, Sección E-Commerce</p>
                 </div>
             </div>
         </div>
     </div>
 
+    
     <!-- Términos de Servicio -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -59,6 +61,7 @@
         </div>
     </div>
 
+    
     <!-- Política de Privacidad -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -75,7 +78,7 @@
             <p>
                 Utilizamos tu información para:
             </p>
-            <ul>
+            <ul class="mb-3">
                 <li>Procesar y completar transacciones</li>
                 <li>Enviar confirmaciones y actualizaciones de pedidos</li>
                 <li>Responder a consultas y solicitudes de servicio</li>
@@ -103,6 +106,7 @@
         </div>
     </div>
 
+    
     <!-- Garantías -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -134,6 +138,7 @@
         </div>
     </div>
 
+    
     <!-- Procedimientos de Venta -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -141,7 +146,7 @@
         </div>
         <div class="col-md-12">
             <h5>4.1 Proceso de Compra</h5>
-            <ol>
+            <ol class="mb-3">
                 <li>Selecciona el dinosaurio deseado del catálogo</li>
                 <li>Revisa los detalles y especificaciones</li>
                 <li>Elige la opción de envío preferida</li>
@@ -165,6 +170,7 @@
         </div>
     </div>
 
+    
     <!-- Políticas Especiales -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -202,6 +208,7 @@
         </div>
     </div>
 
+    
     <!-- Enmiendas y Cambios -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -217,6 +224,7 @@
         </div>
     </div>
 
+    
     <div class="row mt-5 pt-5 border-top">
         <div class="col-md-12 text-center">
             <h4>¿Preguntas sobre nuestros términos?</h4>

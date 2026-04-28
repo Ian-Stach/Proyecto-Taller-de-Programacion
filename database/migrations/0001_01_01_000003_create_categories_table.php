@@ -4,6 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/*
+ * Migración: create_categories_table
+ * ----------------------------------------
+ * Crea la tabla inicial de categorías de productos.
+ *
+ * ESTADO INICIAL: En esta migración, el nombre es único de forma global
+ * (no puede haber dos categorías con el mismo nombre en toda la tabla).
+ * Esto cambia en la migración 000012, donde la unicidad pasa a ser
+ * compuesta (parent_id, name), permitiendo el mismo nombre en distintas ramas.
+ *
+ * La jerarquía padre/hijo (parent_id) se agrega en la migración 000011.
+ * La relación con productos (tabla pivot category_product) se crea en 000010.
+ */
+
 return new class extends Migration
 {
     /**
@@ -13,9 +27,10 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            // unique() global en esta migración; se reemplaza por (parent_id, name) en 000012
             $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->string('image')->nullable();
+            $table->text('description')->nullable(); // Descripción visible en el catálogo; opcional
+            $table->string('image')->nullable();     // Ruta o URL de imagen representativa; opcional
             $table->timestamps();
         });
     }

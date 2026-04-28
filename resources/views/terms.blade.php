@@ -1,3 +1,20 @@
+{{--
+    VISTA: terms (Términos y Usos)
+    ─────────────────────────────────────────────────────────────────────────────
+    Página estática de aviso legal. Sin variables inyectadas;
+    se sirve directamente con Route::view('/terms', 'terms').
+
+    Estructura de secciones (numeradas en la propia página):
+      0. Información Legal        → datos de la empresa (card border-warning)
+      1. Términos de Servicio     → aceptación, licencia, responsabilidad, PI
+      2. Política de Privacidad   → recolección, uso, cookies, GDPR/CCPA
+      3. Garantías y Postventa    → salud, genética, soporte, capacitación
+      4. Procedimientos de Venta  → proceso de compra, transporte, tiempos
+      5. Políticas Especiales     → restricciones de país, edad y propietario
+      6. Cambios en Términos      → reserva de modificación + fecha de actualización
+      CTA                        → enlace al formulario de contacto legal
+    ─────────────────────────────────────────────────────────────────────────────
+--}}
 @extends('layouts.Jurassic_Store')
 
 @section('content')
@@ -10,23 +27,33 @@
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 0: Información Legal
+         Card con los datos legales de la empresa: razón social,
+         domicilio, teléfono, email y registro mercantil.
+         border-warning mantiene coherencia visual con el resto del sitio.
+    ========================================================= --}}
     <!-- Información Legal -->
     <div class="row mb-5">
         <div class="col-md-12">
             <h2 class="mb-4">📋 Información Legal de la Empresa</h2>
-            <div class="card">
+            <div class="card border-warning">
                 <div class="card-body">
                     <p><strong>Titular/Razón Social:</strong> Jurassic Store International S.A.</p>
-                    <p><strong>Domicilio Legal:</strong> Mesozoic Avenue 2026, Dinosaur City, Global District 90210</p>
-                    <p><strong>Teléfono:</strong> +1-800-DINOSAUR (1-800-346-6278)</p>
+                    <p><strong>Domicilio Legal:</strong> Complejo Central Jurassic Store, Bahía Suroeste, Isla Nublar, Costa Rica</p>
+                    <p><strong>Teléfono:</strong> +1-800-DINOLAB (1-800-346-6522)</p>
                     <p><strong>Email:</strong> legal@jurassicstore.com</p>
-                    <p><strong>RFC/TAX ID:</strong> JSI-2026-000001</p>
                     <p class="mb-0"><strong>Registrado en:</strong> Registro de Comercio Internacional, Sección E-Commerce</p>
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 1: Términos y Condiciones de Servicio
+         Cuatro subsecciones: aceptación, licencia de uso, limitación
+         de responsabilidad y propiedad intelectual.
+    ========================================================= --}}
     <!-- Términos de Servicio -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -59,6 +86,12 @@
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 2: Política de Privacidad
+         Cinco subsecciones: recolección de datos, usos, protección,
+         cookies y derechos GDPR/CCPA. La lista de usos (2.2) usa
+         list-group para coherencia visual con el resto del sitio.
+    ========================================================= --}}
     <!-- Política de Privacidad -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -75,7 +108,7 @@
             <p>
                 Utilizamos tu información para:
             </p>
-            <ul>
+            <ul class="mb-3">
                 <li>Procesar y completar transacciones</li>
                 <li>Enviar confirmaciones y actualizaciones de pedidos</li>
                 <li>Responder a consultas y solicitudes de servicio</li>
@@ -103,6 +136,12 @@
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 3: Garantías y Servicio Postventa
+         Cuatro subsecciones: garantía de salud (12 meses), garantía
+         genética (99.9% de autenticidad), soporte 24/7 y programas
+         de capacitación gratuitos para propietarios nuevos.
+    ========================================================= --}}
     <!-- Garantías -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -134,6 +173,12 @@
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 4: Procedimientos y Formas de Entrega
+         Tres subsecciones: proceso de compra paso a paso (lista
+         numerada), responsabilidad durante
+         el transporte y tiempos estimados de entrega.
+    ========================================================= --}}
     <!-- Procedimientos de Venta -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -141,7 +186,7 @@
         </div>
         <div class="col-md-12">
             <h5>4.1 Proceso de Compra</h5>
-            <ol>
+            <ol class="mb-3">
                 <li>Selecciona el dinosaurio deseado del catálogo</li>
                 <li>Revisa los detalles y especificaciones</li>
                 <li>Elige la opción de envío preferida</li>
@@ -165,6 +210,13 @@
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 5: Políticas Especiales y Restricciones
+         Tres alertas alert-warning para destacar visualmente las
+         restricciones más importantes: por país, por edad y
+         responsabilidades del propietario (lista simple dentro
+         de la última alerta).
+    ========================================================= --}}
     <!-- Políticas Especiales -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -202,6 +254,11 @@
         </div>
     </div>
 
+    {{-- =========================================================
+         SECCIÓN 6: Cambios en los Términos
+         Reserva del derecho a modificar los términos en cualquier
+         momento. Incluye la fecha de última actualización.
+    ========================================================= --}}
     <!-- Enmiendas y Cambios -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -217,6 +274,7 @@
         </div>
     </div>
 
+    {{-- CTA: enlace al formulario de contacto para consultas legales --}}
     <div class="row mt-5 pt-5 border-top">
         <div class="col-md-12 text-center">
             <h4>¿Preguntas sobre nuestros términos?</h4>

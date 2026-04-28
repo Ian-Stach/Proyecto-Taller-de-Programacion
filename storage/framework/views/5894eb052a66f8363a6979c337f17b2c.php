@@ -1,7 +1,9 @@
 
 
+
 <?php $__env->startSection('content'); ?>
 <div class="container my-5">
+    
     <div class="row mb-5">
         <div class="col-md-12">
             <h1 class="display-4 mb-4 static-page-title">🦕 Quiénes Somos</h1>
@@ -9,6 +11,7 @@
         </div>
     </div>
 
+    
     <!-- Historia de la Empresa -->
     <div class="row mb-5">
         <div class="col-md-8">
@@ -26,23 +29,24 @@
                 de todo el mundo puedan ser parte de este increíble viaje a través del tiempo.
             </p>
         </div>
-        <div class="col-md-4">
-            <div class="card bg-warning text-dark">
-                <div class="card-body text-center">
-                    <h3 class="about-highlight-icon">🧬</h3>
-                    <h5 class="card-title">Tecnología de clase mundial</h5>
-                    <p class="card-text">Utilizamos tecnología genética de punta para recrear especies extintas con precisión científica.</p>
-                </div>
+        <div class="col-md-4 d-flex align-items-center justify-content-center">
+            <div class="bg-warning text-dark d-flex flex-column align-items-center justify-content-center text-center p-4"
+                 style="width: 260px; height: 260px; border-radius: 50%; border: 3px solid black;"
+            >
+                <div class="fs-1 mb-2">🧬</div>
+                <h6 class="fw-bold mb-2">Tecnología de clase mundial</h6>
+                <p class="mb-0">Tecnología genética de punta para recrear especies extintas con precisión científica.</p>
             </div>
         </div>
     </div>
 
+    
     <!-- Misión, Visión, Valores -->
     <div class="row mb-5">
         <div class="col-md-4">
-            <div class="card border-warning mb-3">
-                <div class="card-header bg-warning text-dark">
-                    <h4>🎯 Misión</h4>
+            <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h4>Misión</h4>
                 </div>
                 <div class="card-body">
                     <p>
@@ -54,9 +58,9 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border-warning mb-3">
-                <div class="card-header bg-warning text-dark">
-                    <h4>🔭 Visión</h4>
+            <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h4>Visión</h4>
                 </div>
                 <div class="card-body">
                     <p>
@@ -68,9 +72,9 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border-warning mb-3">
-                <div class="card-header bg-warning text-dark">
-                    <h4>⭐ Valores</h4>
+            <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h4>Valores</h4>
                 </div>
                 <div class="card-body">
                     <p>
@@ -84,6 +88,7 @@
         </div>
     </div>
 
+    
     <!-- Equipo -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -94,7 +99,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Dr. Alan Grant 👨‍🔬</h5>
-                    <p class="card-text"><strong>Director General & Paleontólogo</strong></p>
+                    <p class="card-text"><strong>Director General &amp; Paleontólogo</strong></p>
                     <p class="text-muted">
                         Con 30 años de experiencia en paleontología, el Dr. Grant lidera nuestra visión de traer el pasado al presente. 
                         Doctorado en Paleontología por las mejores universidades del mundo.
@@ -107,7 +112,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Dra. Ellie Sattler 👩‍🔬</h5>
-                    <p class="card-text"><strong>Jefa de Investigación & Genetista</strong></p>
+                    <p class="card-text"><strong>Jefa de Investigación &amp; Genetista</strong></p>
                     <p class="text-muted">
                         Especialista en ingeniería genética con más de 25 años en el campo. La Dra. Sattler supervisa todos nuestros proyectos 
                         de recreación genética para garantizar máxima calidad.
@@ -132,10 +137,10 @@
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Tim Murphy 👨‍💻</h5>
+                    <h5 class="card-title">Dennis Nedry 👨‍💻</h5>
                     <p class="card-text"><strong>Director de Tecnología</strong></p>
                     <p class="text-muted">
-                        Líder en desarrollo de plataformas digitales y logística. Tim mantiene nuestro sistema funcionando sin interrupciones 
+                        Líder en desarrollo de plataformas digitales y logística. Dennis mantiene nuestro sistema funcionando sin interrupciones
                         24/7 para servir a clientes en todo el mundo.
                     </p>
                 </div>
@@ -143,6 +148,7 @@
         </div>
     </div>
 
+    
     <!-- Por qué elegir Jurassic Store -->
     <div class="row">
         <div class="col-md-12">
@@ -166,6 +172,7 @@
         </div>
     </div>
 
+    
     <div class="mt-5 text-center">
         <a href="<?php echo e(route('products.index')); ?>" class="btn btn-warning btn-lg">
             🦕 Ver Nuestro Catálogo

@@ -1,4 +1,7 @@
+
 <div class="row">
+
+    
     <aside class="col-12 col-md-4 col-lg-3 mb-4 ps-3 products-filter-sidebar">
         <div class="bg-warning p-3 products-filter-panel">
             <div class="mb-3 products-filter-heading">
@@ -11,6 +14,7 @@
                   data-products-async-form
                   data-products-filter-form
             >
+                
                 <?php if(request()->filled('search')): ?>
                     <input type="hidden"
                            name="search"
@@ -18,6 +22,7 @@
                     >
                 <?php endif; ?>
 
+                
                 <?php if($currentSort !== 'latest'): ?>
                     <input type="hidden"
                            name="sort"
@@ -25,6 +30,7 @@
                     >
                 <?php endif; ?>
 
+                
                 <?php $__currentLoopData = $filterFacets; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $facet): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="products-filter-group">
                         <button class="btn products-filter-toggle w-100"
@@ -36,6 +42,7 @@
                         >
                             <span><?php echo e($facet['label']); ?></span>
                             <span class="products-filter-meta">
+                                
                                 <span class="products-filter-count"
                                       data-filter-param="<?php echo e($facet['input_name']); ?>"
                                 ><?php echo e($facet['selected_count']); ?>
@@ -68,6 +75,7 @@
         </div>
     </aside>
 
+    
     <main class="col-12 col-md-8 col-lg-9 products-results-main">
         <?php echo $__env->make('products.partials.results-content', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </main>
