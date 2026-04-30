@@ -206,10 +206,12 @@
             <?php $__currentLoopData = $relatedProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $related): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="col-md-3 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title"><?php echo e($related->name); ?></h5>
-                            <p class="fs-5 fw-bold text-warning">$<?php echo e(number_format($related->price, 2)); ?></p>
-                            <a href="<?php echo e(route('products.show', $related)); ?>" class="btn btn-sm btn-info w-100">Detalles</a>
+                            <p class="fs-5 fw-bold text-warning mt-auto">$<?php echo e(number_format($related->price, 2)); ?></p>
+                            <a class="btn btn-sm btn-info w-100"
+                               href="<?php echo e(route('products.show', $related)); ?>"
+                            >Detalles</a>
                         </div>
                     </div>
                 </div>

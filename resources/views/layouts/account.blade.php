@@ -82,7 +82,7 @@
                     <a href="{{ route('home') }}"
                        class="d-inline-flex align-items-center"
                     >
-                        <img src="{{ asset('images/jp_logo.jpg') }}"
+                        <img src="{{ asset('images/js_logo_header.png') }}"
                              alt="logo"
                              width="60"
                              height="40"

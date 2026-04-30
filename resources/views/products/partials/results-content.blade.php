@@ -341,7 +341,7 @@
                         {{-- Str::limit trunca a 60 caracteres para mantener la tarjeta compacta --}}
                         <p class="product-card-desc">{{ Str::limit($product->description, 60) }}</p>
 
-                        <p class="product-card-price">${{ number_format($product->price, 2) }}</p>
+                        <p class="product-card-price">USD${{ number_format($product->price, 2) }}</p>
 
                         <span class="product-card-stock
                             @if($product->stock > 5) product-card-stock--ok

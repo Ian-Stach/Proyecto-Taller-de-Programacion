@@ -280,7 +280,7 @@
                         
                         <p class="product-card-desc"><?php echo e(Str::limit($product->description, 60)); ?></p>
 
-                        <p class="product-card-price">$<?php echo e(number_format($product->price, 2)); ?></p>
+                        <p class="product-card-price">USD$<?php echo e(number_format($product->price, 2)); ?></p>
 
                         <span class="product-card-stock
                             <?php if($product->stock > 5): ?> product-card-stock--ok

@@ -144,8 +144,8 @@ class Product extends Model
                 'options' => self::ERA_OPTIONS,
             ],
             'heights' => [
-                'label' => 'Tamano',
-                'chip_label' => 'Tamano',
+                'label' => 'Tamaño',
+                'chip_label' => 'Tamaño',
                 'filter_type' => 'height_range', // filtro especial: no es un whereIn sino rangos
                 'options' => self::heightRangeLabels(),
             ],

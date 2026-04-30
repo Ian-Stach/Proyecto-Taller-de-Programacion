@@ -41,7 +41,7 @@
                     <a href="<?php echo e(route('home')); ?>"
                        class="d-inline-flex align-items-center"
                     >
-                        <img src="<?php echo e(asset('images/jp_logo.jpg')); ?>"
+                        <img src="<?php echo e(asset('images/js_logo_header.png')); ?>"
                              alt="logo"
                              width="60"
                              height="40"

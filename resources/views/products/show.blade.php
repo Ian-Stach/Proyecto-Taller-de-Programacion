@@ -271,10 +271,12 @@
             @foreach($relatedProducts as $related)
                 <div class="col-md-3 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ $related->name }}</h5>
-                            <p class="fs-5 fw-bold text-warning">${{ number_format($related->price, 2) }}</p>
-                            <a href="{{ route('products.show', $related) }}" class="btn btn-sm btn-info w-100">Detalles</a>
+                            <p class="fs-5 fw-bold text-warning mt-auto">${{ number_format($related->price, 2) }}</p>
+                            <a class="btn btn-sm btn-info w-100"
+                               href="{{ route('products.show', $related) }}"
+                            >Detalles</a>
                         </div>
                     </div>
                 </div>

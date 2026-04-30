@@ -1,4 +1,6 @@
-/* Navegacion y branding global */
+/* =============================================
+   Navegacion y branding global
+   ============================================= */
 
 /* Define la tipografia decorativa usada en la marca. */
 @font-face {
@@ -143,6 +145,7 @@
     padding: 0.75rem 0.9rem;
     color: rgba(255, 255, 255, 0.84);
     transition: background-color 0.2s ease, color 0.2s ease;
+    border-radius: 0.6rem;
 }
 
 /* Da feedback al navegar por los links del sidebar. */
@@ -254,6 +257,7 @@
     }
 }
 
+/* Boton hamburguesa para abrir el menu de cuenta en movil. */
 .account-menu-toggle {
     width: 42px;
     height: 42px;
@@ -268,6 +272,7 @@
     box-shadow: none;
 }
 
+/* Convierte el avatar del header movil en un acceso a la cuenta. */
 .user-account-mobile-avatar-link {
     margin-left: auto;
     color: inherit;
@@ -281,6 +286,7 @@
     text-decoration: none;
 }
 
+/* Offcanvas que muestra el sidebar de cuenta en pantallas pequenas. */
 .account-sidebar-mobile .offcanvas-header {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -288,9 +294,6 @@
 .account-sidebar-mobile .offcanvas-body {
     padding: 1rem;
 }
-
-/* Agranda el texto de la marca principal (escritorio). */
-/* El tamaño móvil lo define el bloque @media (max-width: 767.98px) arriba. */
 
 /* Muestra la insignia destacada del usuario logueado. */
 .user-badge {
@@ -372,7 +375,9 @@
     stroke: #ff0000;
 }
 
-/* Pagina principal */
+/* =============================================
+   Pagina principal
+   ============================================= */
 
 /* Construye el hero principal con fondo y centrado general. */
 .principal-hero {
@@ -601,7 +606,9 @@
     }
 }
 
-/* Buscadores compartidos: portada y catalogo */
+/* =============================================
+   Buscadores compartidos: portada y catalogo
+   ============================================= */
 
 /* Centra horizontalmente los buscadores de la portada y del catalogo. */
 .principal-search,
@@ -633,7 +640,9 @@
     border-color: #000;
 }
 
-/* Buscador central del header global */
+/* =============================================
+   Buscador central del header global
+   ============================================= */
 
 /* Crece para ocupar el espacio entre el logo y los iconos. */
 .header-search-form {
@@ -688,7 +697,9 @@
     }
 }
 
-/* Catalogo de productos: busqueda y layout */
+/* =============================================
+   Catalogo de productos: busqueda y layout
+   ============================================= */
 
 /* Centra el bloque superior del buscador del catalogo. */
 .products-search-wrap {
@@ -732,7 +743,9 @@
     }
 }
 
-/* Catalogo de productos: filtros */
+/* =============================================
+   Catalogo de productos: filtros
+   ============================================= */
 
 /* Redondea el panel principal de filtros. */
 .products-filter-panel {
@@ -834,7 +847,9 @@
     flex-shrink: 0;
 }
 
-/* Catalogo de productos: filtros activos y ordenamiento */
+/* =============================================
+   Catalogo de productos: filtros activos y ordenamiento
+   ============================================= */
 
 /* Distribuye la fila de filtros activos. */
 .products-active-filters {
@@ -990,7 +1005,9 @@
     }
 }
 
-/* Catalogo de productos: carga async e imagenes */
+/* =============================================
+   Catalogo de productos: carga async e imagenes
+   ============================================= */
 
 /* Define el contenedor que recibe animaciones durante la carga. */
 .products-results-panel {
@@ -1063,7 +1080,9 @@
     display: block;
 }
 
-/* Detalle de producto */
+/* =============================================
+   Detalle de producto
+   ============================================= */
 
 /* Alinea el nombre del producto con el botón de favoritos. */
 .product-detail-header {
@@ -1381,7 +1400,9 @@
     }
 }
 
-/* Paginacion del catalogo */
+/* =============================================
+   Paginacion del catalogo
+   ============================================= */
 
 /* Centra el bloque completo de paginacion. */
 .products-pagination {
@@ -1473,7 +1494,9 @@
     min-width: 44px;
 }
 
-/* Otras paginas */
+/* =============================================
+   Otras paginas
+   ============================================= */
 
 /* Agranda el emoji destacado en favoritos. */
 .favorite-emoji {
