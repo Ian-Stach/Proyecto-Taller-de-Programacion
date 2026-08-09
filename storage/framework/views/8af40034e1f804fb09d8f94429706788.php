@@ -3,8 +3,7 @@
     <div class="container-fluid">
         <div class="d-flex gap-3 align-items-center justify-content-center justify-content-evenly w-100">
             
-            <a class="nav-link"
-               href="<?php echo e(route('home')); ?>"
+            <a class="nav-link" href="<?php echo e(route('home')); ?>"
             >Inicio</a>
 
             

@@ -1,7 +1,10 @@
 
 
+
 <?php $__env->startSection('content'); ?>
 <div class="container my-5">
+
+    
     <div class="row mb-5">
         <div class="col-md-12">
             <h1 class="display-4 mb-4 static-page-title">📞 Contacto</h1>
@@ -10,34 +13,37 @@
         </div>
     </div>
 
+    
     <!-- Información de Contacto -->
     <div class="row mb-5">
         <div class="col-md-4 mb-4">
-            <div class="card border-warning">
+            <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5>📍 Dirección</h5>
                 </div>
                 <div class="card-body">
                     <p>
                         <strong>Jurassic Store International</strong><br>
-                        Mesozoic Avenue 2026<br>
-                        Dinosaur City<br>
-                        Global District 90210
+                        Complejo Central Jurassic Store<br>
+                        Bahía Suroeste, Isla Nublar<br>
+                        Costa Rica
                     </p>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4 mb-4">
-            <div class="card border-warning">
+            <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5>☎️ Teléfono</h5>
                 </div>
                 <div class="card-body">
-                    <p>
+                    <p class="mb-1">
                         <strong>Línea Principal:</strong><br>
-                        +1-800-DINOSAUR<br>
-                        (1-800-346-6278)<br><br>
+                        +1-800-DINOLAB<br>
+                        (1-800-346-6522)
+                    </p>
+                    <p class="mb-0">
                         <strong>Disponible:</strong> 24/7
                     </p>
                 </div>
@@ -45,14 +51,16 @@
         </div>
 
         <div class="col-md-4 mb-4">
-            <div class="card border-warning">
+            <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5>✉️ Email</h5>
                 </div>
                 <div class="card-body">
-                    <p>
+                    <p class="mb-1">
                         <strong>Soporte General:</strong><br>
-                        support@jurassicstore.com<br><br>
+                        support@jurassicstore.com
+                    </p>
+                    <p class="mb-0">
                         <strong>Ventas:</strong><br>
                         sales@jurassicstore.com
                     </p>
@@ -61,24 +69,30 @@
         </div>
     </div>
 
-    <!-- Redes Sociales -->
+    
+    <!-- Ubicación -->
     <div class="row mb-5">
         <div class="col-md-12">
-            <div class="card bg-light">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Síguenos en Redes Sociales</h5>
-                    <p class="mb-3">Mantente actualizado con noticias y promociones</p>
-                    <div class="btn-group" role="group">
-                        <a href="#" class="btn btn-outline-primary">Facebook</a>
-                        <a href="#" class="btn btn-outline-info">Twitter</a>
-                        <a href="#" class="btn btn-outline-danger">Instagram</a>
-                        <a href="#" class="btn btn-outline-secondary">LinkedIn</a>
-                    </div>
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5>🗺️ Nuestra Ubicación — Isla Nublar, Costa Rica</h5>
+                </div>
+                <div class="card-body p-0">
+                    <iframe src="https://maps.google.com/maps?q=5.5167,-87.0667&z=11&output=embed"
+                            width="100%"
+                            height="450"
+                            style="border:0; display:block;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Ubicación de Isla Nublar en el Océano Pacífico, Costa Rica"
+                    ></iframe>
                 </div>
             </div>
         </div>
     </div>
 
+    
     <!-- Formulario de Contacto -->
     <div class="row mb-5">
         <div class="col-md-8 offset-md-2">
@@ -261,6 +275,7 @@ unset($__errorArgs, $__bag); ?>
         </div>
     </div>
 
+    
     <!-- FAQ -->
     <div class="row mt-5 pt-5 border-top">
         <div class="col-md-12">
@@ -271,13 +286,13 @@ unset($__errorArgs, $__bag); ?>
             <div class="accordion" id="faqAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
                             ¿Cuánto tiempo tarda en llegar mi dinosaurio?
                         </button>
                     </h2>
                     <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Depende de la opción de envío que elijas. Estándar: 7-10 días, Expressa: 3-5 días, VIP: 1-2 días
+                            Depende de la opción de envío que elijas. Estándar: 7-10 días, Expresa: 3-5 días, VIP: 1-2 días
                         </div>
                     </div>
                 </div>

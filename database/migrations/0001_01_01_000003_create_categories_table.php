@@ -29,9 +29,12 @@ return new class extends Migration
             $table->id();
             // unique() global en esta migración; se reemplaza por (parent_id, name) en 000012
             $table->string('name')->unique();
-            $table->text('description')->nullable(); // Descripción visible en el catálogo; opcional
-            $table->string('image')->nullable();     // Ruta o URL de imagen representativa; opcional
             $table->timestamps();
+            $table->foreignId('parent_id')
+                ->nullable()              // null = categoría raíz (nivel superior)
+                ->after('id')            // Se posiciona justo después del id
+                ->constrained('categories') // FK a la misma tabla (auto-referencial); nombre explícito requerido
+                ->nullOnDelete();         // Si el padre se elimina, los hijos pasan a ser raíz
         });
     }
 

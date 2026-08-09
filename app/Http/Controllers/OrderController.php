@@ -31,11 +31,12 @@ class OrderController extends Controller
      * en la vista del listado sin queries adicionales.
      * Pagina a 10 órdenes por página en orden descendente de fecha.
      */
-    public function index()
-    {
+    public function index() {
+        $orderDateColumn = Order::dateColumn();
+
         $orders = Auth::user()->orders()
             ->with('orderItems')
-            ->orderBy('created_at', 'desc')
+            ->orderByDesc($orderDateColumn)
             ->paginate(10);
 
         return view('orders.index', compact('orders'));
@@ -53,8 +54,7 @@ class OrderController extends Controller
      * Carga 'orderItems.product' con eager loading para que la vista pueda mostrar
      * el nombre, imagen y precio de cada producto sin N queries adicionales.
      */
-    public function show(Order $order)
-    {
+    public function show(Order $order) {
         // Verificar que la orden pertenece al usuario autenticado
         if ($order->user_id !== Auth::id()) {
             abort(403, 'No autorizado');
@@ -92,8 +92,7 @@ class OrderController extends Controller
      *
      * La transacción garantiza consistencia: o todo ocurre o nada.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $cart = session()->get('cart') ?? [];
 
         if (empty($cart) || !is_array($cart)) {
@@ -136,8 +135,9 @@ class OrderController extends Controller
             // Crear orden
             $order = Order::create([
                 'user_id' => Auth::id(),
+                'date' => now(),
                 'total_price' => $total,
-                'status' => 'pending'
+                'status' => 'pendiente'
             ]);
 
             // Crear items y reducir stock

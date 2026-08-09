@@ -19,8 +19,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Columnas relevantes:
  *   parent_id   → FK a la misma tabla (null = categoría raíz)
  *   name        → nombre visible de la categoría
- *   description → descripción opcional
- *   image       → URL o path de imagen representativa
  *
  * Relaciones:
  *   parent()   → BelongsTo(Category) — la categoría padre inmediata
@@ -35,7 +33,7 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['parent_id', 'name', 'description', 'image'];
+    protected $fillable = ['parent_id', 'name'];
 
     protected function casts(): array
     {

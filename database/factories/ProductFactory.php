@@ -24,8 +24,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<Product>
  */
-class ProductFactory extends Factory
-{
+class ProductFactory extends Factory {
     protected $model = Product::class;
 
     /*
@@ -35,8 +34,7 @@ class ProductFactory extends Factory
      * directa (category()) y la many-to-many (categories()).
      * Si category_id es null (producto sin categoría), no hace nada.
      */
-    public function configure(): static
-    {
+    public function configure(): static {
         return $this->afterCreating(function (Product $product) {
             if ($product->category_id) {
                 $product->categories()->syncWithoutDetaching([$product->category_id]);
@@ -49,8 +47,7 @@ class ProductFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
+    public function definition(): array {
         $attributes = [
             // Intenta tomar una categoría existente al azar (inRandomOrder → 1 query).
             // Si no existe ninguna categoría en BD, crea una nueva con Category::factory().
@@ -62,7 +59,7 @@ class ProductFactory extends Factory
             'description' => fake()->paragraph(),
             // randomFloat(decimales, min, max)
             'price' => fake()->randomFloat(2, 10, 500),
-            'stock' => fake()->numberBetween(0, 100),
+            'stock' => fake()->numberBetween(100, 1000),
             'image' => fake()->imageUrl(640, 480, 'dinosaurs'),
             'height_meters' => fake()->randomFloat(2, 1, 18),
             // 90% de probabilidad de que el producto sea activo (visible en catálogo)

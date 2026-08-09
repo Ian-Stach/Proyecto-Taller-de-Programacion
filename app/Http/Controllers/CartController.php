@@ -8,11 +8,8 @@ use Illuminate\Http\Request;
 /*
  * CartController
  * ---------------
- * Gestiona el carrito de compras, que se almacena íntegramente en la sesión PHP
- * como un array asociativo: [ product_id => quantity ].
- *
- * No existe un modelo Cart ni tabla en BD; el carrito vive en la sesión del usuario.
- * Solo usuarios autenticados pueden usar el carrito (middleware 'auth' en routes/web.php).
+ * Gestiona el carrito de compras, que se almacena íntegramente en la sesión PHP como un array asociativo: [ product_id => quantity ].
+ * No existe un modelo Cart ni tabla en BD; el carrito vive en la sesión del usuario. Solo usuarios autenticados pueden usar el carrito (middleware 'auth' en routes/web.php).
  *
  * Rutas:
  *   GET    /cart              → index()   → muestra el carrito
@@ -25,11 +22,8 @@ class CartController extends Controller
      * Ver carrito
      * GET /cart
      *
-     * Si el carrito está vacío devuelve la vista con arrays vacíos directamente,
-     * evitando hacer cualquier consulta a la BD.
-     *
-     * Si hay productos, los obtiene TODOS en una sola query usando whereIn()
-     * con las claves del array de sesión (los product_ids), y luego los indexa
+     * Si el carrito está vacío devuelve la vista con arrays vacíos directamente, evitando hacer cualquier consulta a la BD.
+     * Si hay productos, los obtiene TODOS en una sola query usando whereIn() con las claves del array de sesión (los product_ids), y luego los indexa
      * por id con keyBy('id') para acceso O(1) dentro del foreach.
      *
      * Construye $cartItems como array de arrays con:
@@ -38,11 +32,9 @@ class CartController extends Controller
      *   'subtotal' → price * quantity
      * y acumula $total para mostrar el resumen.
      *
-     * NOTA: si un producto fue eliminado de la BD después de ser añadido al carrito,
-     * el isset($products[$productId]) lo descarta silenciosamente.
+     * NOTA: si un producto fue eliminado de la BD después de ser añadido al carrito, el isset($products[$productId]) lo descarta silenciosamente.
      */
-    public function index()
-    {
+    public function index() {
         $cart = session()->get('cart') ?? [];
         
         if (empty($cart)) {
@@ -76,21 +68,15 @@ class CartController extends Controller
      * Agregar producto al carrito
      * POST /cart/{product}
      *
-     * La validación usa 'max:' . $product->stock como regla dinámica para que
-     * la cantidad enviada en este request no supere el stock total del producto.
+     * La validación usa 'max:' . $product->stock como regla dinámica para que la cantidad enviada en este request no supere el stock total del producto.
      *
-     * Pero el carrito es acumulativo: el mismo producto puede estar ya en el carrito
-     * de un add anterior. Por eso se calcula $newQuantity = $currentQuantity + $request->quantity
-     * y se valida que esa suma tampoco supere el stock. Si supera, se devuelve un error
-     * descriptivo indicando cuánto ya hay en el carrito.
+     * Pero el carrito es acumulativo: el mismo producto puede estar ya en el carrito de un add anterior. Por eso se calcula $newQuantity = $currentQuantity + $request->quantity
+     * y se valida que esa suma tampoco supere el stock. Si supera, se devuelve un error descriptivo indicando cuánto ya hay en el carrito.
      *
-     * Devuelve JSON en lugar de una redirección para que el cliente pueda
-     * mostrar el resultado sin recargar la página (manejado por public/js/cart.js).
-     * La validación de Laravel también devuelve JSON automáticamente cuando
-     * el request incluye el header Accept: application/json.
+     * Devuelve JSON en lugar de una redirección para que el cliente pueda mostrar el resultado sin recargar la página (manejado por public/js/cart.js).
+     * La validación de Laravel también devuelve JSON automáticamente cuando el request incluye el header Accept: application/json.
      */
-    public function add(Request $request, Product $product)
-    {
+    public function add(Request $request, Product $product) {
         $request->validate([
             'quantity' => 'required|integer|min:1|max:' . $product->stock
         ]);
@@ -129,15 +115,12 @@ class CartController extends Controller
      * Contenido del sidebar del carrito
      * GET /cart/sidebar
      *
-     * Devuelve el HTML del partial cart-sidebar con los datos actualizados
-     * de la sesión. Usado por cart.js tras un add() exitoso para refrescar
+     * Devuelve el HTML del partial cart-sidebar con los datos actualizados de la sesión. Usado por cart.js tras un add() exitoso para refrescar
      * el offcanvas sin recargar la página completa.
      *
-     * Construye los mismos datos que el ViewComposer del AppServiceProvider,
-     * pero en una respuesta independiente (no un layout completo).
+     * Construye los mismos datos que el ViewComposer del AppServiceProvider, pero en una respuesta independiente (no un layout completo).
      */
-    public function sidebar()
-    {
+    public function sidebar() {
         $cart = session()->get('cart', []);
         $sidebarCartItems = [];
         $sidebarCartSubtotal = 0;
@@ -161,7 +144,6 @@ class CartController extends Controller
                 $sidebarCartSubtotal += $subtotal;
             }
         }
-
         return view('layouts.partials.cart-sidebar', compact('sidebarCartItems', 'sidebarCartSubtotal'));
     }
 
@@ -169,17 +151,13 @@ class CartController extends Controller
      * Remover producto del carrito
      * DELETE /cart/{product}
      *
-     * Elimina la clave del producto del array de sesión.
-     * Si el producto no estaba en el carrito (isset falla), no hace nada
+     * Elimina la clave del producto del array de sesión. Si el producto no estaba en el carrito (isset falla), no hace nada
      * y responde igualmente, evitando errores por doble clic o race conditions.
      *
-     * Cuando la petición viene del sidebar AJAX (X-Requested-With: XMLHttpRequest
-     * o Accept: application/json) devuelve JSON { success: true }.
-     * De lo contrario redirige a la página del carrito (comportamiento clásico
-     * para el form de cart/show.blade.php que no usa fetch).
+     * Cuando la petición viene del sidebar AJAX (X-Requested-With: XMLHttpRequest o Accept: application/json) devuelve JSON { success: true }.
+     * De lo contrario redirige a la página del carrito (comportamiento clásico para el form de cart/show.blade.php que no usa fetch).
      */
-    public function remove(Request $request, Product $product)
-    {
+    public function remove(Request $request, Product $product) {
         $cart = session()->get('cart', []);
 
         if (isset($cart[$product->id])) {

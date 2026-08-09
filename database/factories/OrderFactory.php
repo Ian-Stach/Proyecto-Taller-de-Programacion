@@ -23,8 +23,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<Order>
  */
-class OrderFactory extends Factory
-{
+class OrderFactory extends Factory {
     protected $model = Order::class;
 
     /**
@@ -36,10 +35,11 @@ class OrderFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'date' => fake()->dateTimeBetween('-1 year', 'now'),
             // randomFloat(decimales, min, max)
             'total_price' => fake()->randomFloat(2, 50, 2000),
             // Los 3 estados válidos del sistema de órdenes
-            'status' => fake()->randomElement(['pending', 'completed', 'cancelled']),
+            'status' => fake()->randomElement(['pendiente', 'completado', 'cancelado']),
         ];
     }
 }

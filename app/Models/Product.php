@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
 /*
@@ -41,23 +43,10 @@ use Illuminate\Support\Collection;
  *   orderItems() → HasMany(OrderItem)        — ítems en órdenes que incluyen este producto
  *   favorites()  → HasMany(Favorite)         — registros de favoritos de usuarios
  */
-class Product extends Model
-{
-    use HasFactory;
+#[Fillable(['category_id', 'habitat', 'diet', 'era', 'height_meters', 'name', 'description', 'price', 'stock', 'image', 'active'])]
 
-    protected $fillable = [
-        'category_id',
-        'habitat',
-        'diet',
-        'era',
-        'height_meters',
-        'name',
-        'description',
-        'price',
-        'stock',
-        'image',
-        'active',
-    ];
+class Product extends Model {
+    use HasFactory, SoftDeletes;
 
     /*
      * Caché estático en memoria para el mapa de parent_id de categorías.
@@ -122,8 +111,7 @@ class Product extends Model
      * NOTA: 'heights' no tiene 'column' porque su filter_type 'height_range' usa
      * condiciones de rango (>= / <) en lugar de un whereIn simple.
      */
-    public static function catalogAttributeFacets(): array
-    {
+    public static function catalogAttributeFacets(): array {
         return [
             'habitats' => [
                 'label' => 'Habitat',
@@ -281,6 +269,36 @@ class Product extends Model
         }
 
         return self::$catalogCategoryParentMap;
+    }
+
+    public function scopeFilter($query, array $filters) {
+        $hasNumericFilter = static fn (array $filters, string $key): bool => array_key_exists($key, $filters) && $filters[$key] !== '' && $filters[$key] !== null;
+
+        return $query
+            ->when($filters['search'] ?? null, fn ($q, $value) =>
+                $q->where('name', 'like', "%{$value}%")
+            )
+            ->when(isset($filters['active']) && $filters['active'] !== '', fn ($q) =>
+                $q->where('active', (bool) $filters['active'])
+            )
+            ->when($hasNumericFilter($filters, 'stock'), fn ($q) =>
+                $q->where('stock', '<=', (int) $filters['stock'])
+            )
+            ->when($hasNumericFilter($filters, 'price'), fn ($q) =>
+                $q->where('price', '<=', (float) $filters['price'])
+            )
+            ->when($filters['habitat'] ?? null, fn ($q, $value) =>
+                $q->where('habitat', $value)
+            )
+            ->when($filters['diet'] ?? null, fn ($q, $value) =>
+                $q->where('diet', $value)
+            )
+            ->when($hasNumericFilter($filters, 'height_meters'), fn ($q) =>
+                $q->where('height_meters', '<=', (float) $filters['height_meters'])
+            )
+            ->when($filters['era'] ?? null, fn ($q, $value) =>
+                $q->where('era', $value)
+            );
     }
 
     // Relacion: Un producto puede estar en muchos items de orden

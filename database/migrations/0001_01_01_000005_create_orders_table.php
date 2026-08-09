@@ -27,11 +27,13 @@ return new class extends Migration
             $table->id();
             // onDelete('cascade') → si el usuario se da de baja, sus pedidos se eliminan
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            // Fecha operativa de la orden: se usa para historial, filtros y métricas.
+            $table->dateTime('date');
             // decimal(10, 2) → hasta 99,999,999.99; más amplio que el precio unitario (8,2)
             // porque es la suma de todos los ítems + impuesto
             $table->decimal('total_price', 10, 2);
             // string en lugar de enum: más flexible para agregar estados en el futuro sin migrar
-            $table->string('status')->default('pending'); // pending, completed, cancelled
+            $table->string('status')->default('pendiente'); // pendiente, completado, cancelado
             $table->timestamps();
         });
     }

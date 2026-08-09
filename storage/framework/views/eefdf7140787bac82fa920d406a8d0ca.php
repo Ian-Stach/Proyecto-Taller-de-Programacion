@@ -24,8 +24,6 @@
                            class="text-white-50"
                         >Contacto</a>
                     </li>
-                    
-                    <li><a class="text-white-50">Política de privacidad</a></li>
                 </ul>
             </div>
 

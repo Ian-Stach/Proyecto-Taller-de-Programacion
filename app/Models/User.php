@@ -2,30 +2,26 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-// MustVerifyEmail está comentado intencionalmente: si se implementara, Laravel exigiría
-// que el usuario verifique su email antes de acceder a rutas protegidas. En este
-// proyecto la verificación no está activa como requisito de acceso.
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /*
  * User
  * -----
- * Modelo de usuario autenticable. Extiende Authenticatable de Laravel, que a su vez
- * implementa las interfaces de autenticación (Illuminate\Contracts\Auth\Authenticatable)
+ * Modelo de usuario autenticable. Extiende Authenticatable de Laravel, que a su vez implementa las interfaces de autenticación (Illuminate\Contracts\Auth\Authenticatable)
  * y provee la lógica de sesión, remember_token, etc.
  *
  * Tabla: users
  * Columnas relevantes:
  *   name              → nombre del usuario
  *   email             → email único, usado como credencial de login
- *   email_verified_at → null si no ha verificado; si MustVerifyEmail estuviera activo,
- *                       Laravel bloquearía el acceso hasta que no sea null.
+ *   email_verified_at → null si no ha verificado; Laravel bloquea el acceso a rutas protegidas con el middleware 'verified' hasta que no sea null.
  *   password          → hash bcrypt (cast 'hashed' lo hashea automáticamente al asignar)
  *   remember_token    → token de "recordarme" generado al hacer login con esa opción
  *
@@ -44,27 +40,35 @@ use Illuminate\Notifications\Notifiable;
  *   orders()    → HasMany(Order)    — historial de órdenes del usuario
  *   favorites() → HasMany(Favorite) — productos marcados como favoritos
  */
-#[Fillable(['name', 'email', 'password'])]
+
+#[Fillable(['name', 'email', 'password', 'is_admin', 'photo', 'birthdate'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+
+class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    // @use HasFactory<UserFactory>
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
+    
     protected function casts(): array
     {
         return [
-            // 'datetime' devuelve email_verified_at como instancia de Carbon (no string)
-            'email_verified_at' => 'datetime',
-            // 'hashed' hashea automáticamente el password con bcrypt al asignarlo:
-            // $user->password = 'texto_plano' → se guarda el hash sin llamar a Hash::make()
-            'password' => 'hashed',
+            
+            'email_verified_at' => 'datetime',     // 'datetime' devuelve email_verified_at como instancia de Carbon (no string)
+            'password' => 'hashed',                // 'hashed' hashea automáticamente el password con bcrypt al asignarlo:
+                                                   // $user->password = 'texto_plano' → se guarda el hash sin llamar a Hash::make()
+            'is_admin'  => 'boolean',
+            'birthdate' => 'date',
         ];
+    }
+
+    public function getIsActiveAttribute(): bool
+    {
+        return $this->email_verified_at !== null;
     }
 
     // Relación: Un usuario tiene muchas órdenes

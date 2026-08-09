@@ -1,5 +1,6 @@
 
 
+
 <?php $__env->startSection('content'); ?>
 <div class="container my-5">
     <div class="row mb-5">
@@ -10,6 +11,7 @@
         </div>
     </div>
 
+    
     <!-- Tipos de Entregas -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -17,13 +19,13 @@
         </div>
 
         <div class="col-md-4 mb-4">
-            <div class="card border-warning">
+            <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5>📍 Entrega Estándar</h5>
                 </div>
                 <div class="card-body">
                     <p><strong>Tiempo:</strong> 7-10 días hábiles</p>
-                    <p><strong>Costo:</strong> $50 USD</p>
+                    <p><strong>Costo:</strong> $8,000 USD</p>
                     <p class="text-muted">
                         Envío aéreo en contenedor climatizado. Incluye aseguramiento básico y seguimiento en tiempo real.
                     </p>
@@ -33,29 +35,29 @@
         </div>
 
         <div class="col-md-4 mb-4">
-            <div class="card border-warning">
+            <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5>⚡ Entrega Expressa</h5>
                 </div>
                 <div class="card-body">
                     <p><strong>Tiempo:</strong> 3-5 días hábiles</p>
-                    <p><strong>Costo:</strong> $150 USD</p>
+                    <p><strong>Costo:</strong> $25,000 USD</p>
                     <p class="text-muted">
-                        Avión charter privado con veterinario acompañante. Máxima rapidez y cuidado especializado.
+                        Vuelo privado exclusivo con veterinario acompañante. Máxima rapidez y cuidado especializado.
                     </p>
-                    <p class="small">✓ Veterinario incluido<br>✓ Avión charter<br>✓ Cuidado premium</p>
+                    <p class="small">✓ Veterinario incluido<br>✓ Vuelo privado exclusivo<br>✓ Cuidado premium</p>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4 mb-4">
-            <div class="card border-warning">
+            <div class="card border-warning h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5>🏆 Entrega VIP</h5>
                 </div>
                 <div class="card-body">
                     <p><strong>Tiempo:</strong> 1-2 días hábiles</p>
-                    <p><strong>Costo:</strong> $500 USD</p>
+                    <p><strong>Costo:</strong> $75,000 USD</p>
                     <p class="text-muted">
                         Servicio personalizado con equipo especializado. Incluye instalación en sitio y capacitación completa.
                     </p>
@@ -65,6 +67,7 @@
         </div>
     </div>
 
+    
     <!-- Zonas de Cobertura -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -72,57 +75,58 @@
         </div>
 
         <div class="col-md-4">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action active bg-warning text-dark">
+            <div class="list-group border border-primary">
+                <div class="list-group-item bg-warning text-dark fw-bold">
                     🌎 América del Norte
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                </div>
+                <div class="list-group-item">
                     Estados Unidos (todos los estados)
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                </div>
+                <div class="list-group-item">
                     Canadá (todas las provincias)
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                </div>
+                <div class="list-group-item">
                     México (todo el país)
-                </a>
+                </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action active bg-warning text-dark">
+            <div class="list-group border border-primary">
+                <div class="list-group-item bg-warning text-dark fw-bold">
                     🌍 América Latina
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                </div>
+                <div class="list-group-item">
                     Argentina, Brasil, Chile, Colombia
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                </div>
+                <div class="list-group-item">
                     Perú, Venezuela, Uruguay, Paraguay
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                </div>
+                <div class="list-group-item">
                     Otros países bajo solicitud especial
-                </a>
+                </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action active bg-warning text-dark">
+            <div class="list-group border border-primary">
+                <div class="list-group-item bg-warning text-dark fw-bold">
                     🌏 Europa, Asia, Oceanía
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                </div>
+                <div class="list-group-item">
                     Unión Europea (todos los países)
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                </div>
+                <div class="list-group-item">
                     Reino Unido, Asia (principal)
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                </div>
+                <div class="list-group-item">
                     Australia, Nueva Zelanda, Japón
-                </a>
+                </div>
             </div>
         </div>
     </div>
 
+    
     <!-- Formas de Envío -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -130,36 +134,49 @@
         </div>
 
         <div class="col-md-6 mb-4">
-            <h5 class="mb-3">Transporte Especializado</h5>
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <strong>Transporte Aéreo:</strong> Aviones de carga adaptados con sistemas de climatización y oxígeno
-                </li>
-                <li class="list-group-item">
-                    <strong>Contenedores Bioseguros:</strong> Diseñados especialmente para dinosaurios, con control de temperatura, humedad y presión
-                </li>
-                <li class="list-group-item">
-                    <strong>Monitoreo 24/7:</strong> Sensores IoT que envían datos cada 15 minutos
-                </li>
-                <li class="list-group-item">
-                    <strong>Seguro Total:</strong> Cobertura de accidentes, daños y pérdida total
-                </li>
-            </ul>
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Transporte Especializado</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Transporte Aéreo:</strong> Aviones de carga adaptados con sistemas de climatización y oxígeno
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Contenedores Bioseguros:</strong> Diseñados especialmente para dinosaurios, con control de temperatura, humedad y presión
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Monitoreo 24/7:</strong> Sensores IoT que envían datos cada 15 minutos
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Seguro Total:</strong> Cobertura de accidentes, daños y pérdida total
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-6 mb-4">
-            <h5 class="mb-3">Proceso de Envío</h5>
-            <ol class="list-group list-group-numbered">
-                <li class="list-group-item">Confirmación de entrega y detalles del dinosaurio</li>
-                <li class="list-group-item">Preparación especializada (3-5 días)</li>
-                <li class="list-group-item">Embalaje en contenedor bioseguro</li>
-                <li class="list-group-item">Transporte al aeropuerto</li>
-                <li class="list-group-item">Vuelo a destino</li>
-                <li class="list-group-item">Entrega con certificados y documentación</li>
-            </ol>
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Proceso de Envío</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ol class="list-group list-group-numbered list-group-flush">
+                        <li class="list-group-item">Confirmación de entrega y detalles del dinosaurio</li>
+                        <li class="list-group-item">Preparación especializada (3-5 días)</li>
+                        <li class="list-group-item">Embalaje en contenedor bioseguro</li>
+                        <li class="list-group-item">Transporte al aeropuerto</li>
+                        <li class="list-group-item">Vuelo a destino</li>
+                        <li class="list-group-item">Entrega con certificados y documentación</li>
+                    </ol>
+                </div>
+            </div>
         </div>
     </div>
 
+    
     <!-- Formas de Pago -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -188,6 +205,7 @@
         </div>
     </div>
 
+    
     <!-- Políticas de Devolución -->
     <div class="row mb-5">
         <div class="col-md-12">
@@ -211,6 +229,7 @@
         </div>
     </div>
 
+    
     <div class="mt-5 text-center">
         <a href="<?php echo e(route('contact')); ?>" class="btn btn-warning btn-lg me-2">
             📞 Contactar para más información

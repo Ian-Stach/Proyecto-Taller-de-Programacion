@@ -1,9 +1,12 @@
 
 
+
+
 <?php $__env->startSection('content'); ?>
 <div class="container my-5">
     <h1 class="mb-4">🛒 Carrito de compras</h1>
 
+    <!-- Errores de validación (ej: cantidad supera el stock al añadir un producto) -->
     <?php if($errors->any()): ?>
         <div class="alert alert-danger">
             <?php echo e($errors->first()); ?>
@@ -12,6 +15,7 @@
     <?php endif; ?>
 
     <?php if(count($cartItems) > 0): ?>
+        <!-- Tabla de productos en el carrito -->
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead class="table-warning">
@@ -23,6 +27,7 @@
                         <th>Acción</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <tr>
@@ -33,6 +38,7 @@
                             <td><?php echo e($item['quantity']); ?></td>
                             <td class="fw-bold text-warning">$<?php echo e(number_format($item['subtotal'], 2)); ?></td>
                             <td>
+                                <!-- Formulario DELETE a cart.remove para quitar el producto del carrito -->
                                 <form action="<?php echo e(route('cart.remove', $item['product']->id)); ?>" method="POST" class="d-inline">
                                     <?php echo csrf_field(); ?>
                                     <?php echo method_field('DELETE'); ?>
@@ -52,44 +58,43 @@
                 <div class="card bg-light">
                     <div class="card-body">
                         <h5 class="card-title">Resumen del Pedido</h5>
+                        <!-- $total, $tax y $grandTotal vienen calculados desde el controlador -->
                         <div class="d-flex justify-content-between mb-3">
                             <strong>Subtotal:</strong>
                             <span>$<?php echo e(number_format($total, 2)); ?></span>
                         </div>
+
                         <div class="d-flex justify-content-between mb-3">
                             <strong>Impuesto (10%):</strong>
-                            <span>$<?php echo e(number_format($total * 0.10, 2)); ?></span>
+                            <span>$<?php echo e(number_format($tax, 2)); ?></span>
                         </div>
+
                         <hr>
+
                         <div class="d-flex justify-content-between fs-5 fw-bold">
                             <strong>Total:</strong>
-                            <span class="text-warning">$<?php echo e(number_format($total * 1.10, 2)); ?></span>
+                            <span class="text-warning">$<?php echo e(number_format($grandTotal, 2)); ?></span>
                         </div>
                     </div>
                 </div>
 
+                <!-- Formulario de checkout: inicia el proceso de pago -->
                 <form action="<?php echo e(route('checkout.store')); ?>" method="POST" class="mt-3">
                     <?php echo csrf_field(); ?>
-                    <button type="submit" class="btn btn-warning btn-lg w-100">
-                        💳 Proceder al pago
-                    </button>
+                    <button type="submit" class="btn btn-warning btn-lg w-100">Proceder al pago</button>
                 </form>
 
-                <a href="<?php echo e(route('products.index')); ?>" class="btn btn-secondary w-100 mt-2">
-                    Seguir comprando
-                </a>
+                <a href="<?php echo e(route('products.index')); ?>" class="btn btn-secondary w-100 mt-2">Seguir comprando</a>
             </div>
         </div>
     <?php else: ?>
+        <!-- Estado vacío: se muestra cuando el carrito no tiene ningún producto -->
         <div class="alert alert-info text-center py-5">
             <h4>Tu carrito está vacío</h4>
             <p class="mb-3">¡Comienza a comprar para agregar artículos a tu carrito!</p>
-            <a href="<?php echo e(route('products.index')); ?>" class="btn btn-warning btn-lg">
-                🦕 Comprar Ahora
-            </a>
+            <a href="<?php echo e(route('products.index')); ?>" class="btn btn-warning btn-lg">Comprar Ahora</a>
         </div>
     <?php endif; ?>
 </div>
 <?php $__env->stopSection(); ?>
-
 <?php echo $__env->make('layouts.Jurassic_Store', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\ianiv\Herd\iniciativa-dinosaurios\resources\views\cart\show.blade.php ENDPATH**/ ?>

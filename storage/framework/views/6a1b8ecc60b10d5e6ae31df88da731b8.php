@@ -30,7 +30,7 @@
                                 <strong>#<?php echo e($order->id); ?></strong>
                             </td>
                             <td>
-                                <?php echo e($order->created_at->translatedFormat('d M Y H:i')); ?>
+                                <?php echo e($order->date->translatedFormat('d M Y H:i')); ?>
 
                             </td>
                             <td>

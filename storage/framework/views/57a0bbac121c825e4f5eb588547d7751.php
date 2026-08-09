@@ -42,12 +42,8 @@
                 <div class="card-body p-0">
                     <?php if($product->image): ?>
                         <div class="products-image-wrapper product-detail-image-wrapper rounded overflow-hidden">
-                            <img src="<?php echo e($product->image); ?>"
-                                 class="card-img-top product-detail-image"
-                                 alt="<?php echo e($product->name); ?>"
-                                 
-                                 onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');"
-                            >
+                            
+                            <img src="<?php echo e(asset($product->image)); ?>" class="card-img-top product-detail-image" alt="<?php echo e($product->name); ?>" onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
                             <div class="bg-light products-image-placeholder product-detail-image-placeholder d-none rounded">
                                 <span class="text-muted">Sin imagen</span>
                             </div>
@@ -69,21 +65,14 @@
 
                 
                 <?php if(auth()->guard()->check()): ?>
-                    <form action="<?php echo e($isFavorite ? route('favorites.remove', $product) : route('favorites.add', $product)); ?>"
-                          method="POST"
-                          class="product-detail-fav-form"
-                    >
+                    <form action="<?php echo e($isFavorite ? route('favorites.remove', $product) : route('favorites.add', $product)); ?>" method="POST" class="product-detail-fav-form">
                         <?php echo csrf_field(); ?>
 
                         <?php if($isFavorite): ?>
                             <?php echo method_field('DELETE'); ?>
                         <?php endif; ?>
 
-                        <button type="submit"
-                                class="product-detail-fav-btn <?php echo e($isFavorite ? 'is-active' : ''); ?>"
-                                aria-label="<?php echo e($isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'); ?>"
-                                title="<?php echo e($isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'); ?>"
-                        >
+                        <button type="submit" class="product-detail-fav-btn <?php echo e($isFavorite ? 'is-active' : ''); ?>" aria-label="<?php echo e($isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'); ?>" title="<?php echo e($isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'); ?>">
                             <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="currentColor">
                                 <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
                             </svg>
@@ -140,59 +129,35 @@
             
             <div class="mb-4">
                 <strong>Stock:</strong>
-                <span class="badge <?php if($product->stock > 5): ?> bg-success <?php elseif($product->stock > 0): ?> bg-warning text-dark <?php else: ?> bg-danger <?php endif; ?>">
-                    <?php echo e($product->stock); ?> unidades
-                </span>
+                <span class="badge <?php if($product->stock > 5): ?> bg-success <?php elseif($product->stock > 0): ?> bg-warning text-dark <?php else: ?> bg-danger <?php endif; ?>"><?php echo e($product->stock); ?> unidades</span>
             </div>
 
             
             <?php if($product->stock > 0): ?>
                 <?php if(auth()->guard()->check()): ?>
-                    <form action="<?php echo e(route('cart.add', $product)); ?>"
-                          method="POST" class="mb-4"
-                    >
+                    <form action="<?php echo e(route('cart.add', $product)); ?>" method="POST" class="mb-4 cart-add-form">
                         <?php echo csrf_field(); ?>
 
                         <div class="mb-3">
-                            <label for="quantity"
-                                   class="form-label"
-                            >Cantidad:
-                            </label>
+                            <label for="quantity" class="form-label">Cantidad:</label>
                             
-                            <input type="number"
-                                   name="quantity"
-                                   id="quantity"
-                                   value="1"
-                                   min="1"
-                                   max="<?php echo e($product->stock); ?>"
-                                   class="form-control product-quantity-input"
-                            >
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="<?php echo e($product->stock); ?>" class="form-control product-quantity-input">
                         </div>
 
-                        <button type="submit"
-                                class="btn btn-warning btn-lg me-2"
-                        >🛒 Añadir al carrito
+                        <button type="submit" class="btn btn-warning btn-lg me-2">🛒 Añadir al carrito
                         </button>
                     </form>
                 <?php else: ?>
                     
-                    <button type="button"
-                            class="btn btn-warning btn-lg"
-                            data-bs-toggle="modal"
-                            data-bs-target="#loginModal"
-                    >Iniciar sesión para comprar</button>
+                    <button type="button" class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión para comprar</button>
                 <?php endif; ?>
             <?php else: ?>
-                <div class="alert alert-danger">
-                    Sin stock
-                </div>
+                <div class="alert alert-danger">Sin stock</div>
             <?php endif; ?>
 
             <hr>
 
-            <a href="<?php echo e(route('products.index')); ?>" class="btn btn-secondary">
-                ← Volver a productos
-            </a>
+            <a href="<?php echo e(route('products.index')); ?>" class="btn btn-secondary">← Volver a productos</a>
         </div>
     </div>
 
@@ -205,10 +170,10 @@
             <?php $__currentLoopData = $relatedProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $related): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="col-md-3 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title"><?php echo e($related->name); ?></h5>
-                            <p class="fs-5 fw-bold text-warning">$<?php echo e(number_format($related->price, 2)); ?></p>
-                            <a href="<?php echo e(route('products.show', $related)); ?>" class="btn btn-sm btn-info w-100">Detalles</a>
+                            <p class="fs-5 fw-bold text-warning mt-auto">$<?php echo e(number_format($related->price, 2)); ?></p>
+                            <a class="btn btn-sm btn-info w-100" href="<?php echo e(route('products.show', $related)); ?>">Detalles</a>
                         </div>
                     </div>
                 </div>

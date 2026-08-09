@@ -20,13 +20,13 @@
     <!-- Información del pedido -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="card">
+            <div class="card h-100">
                 <div class="card-header bg-warning">
                     <strong>Información del pedido</strong>
                 </div>
                 <div class="card-body">
                     <p><strong>Pedido:</strong> #<?php echo e($order->id); ?></p>
-                    <p><strong>Fecha:</strong> <?php echo e($order->created_at->translatedFormat('d M Y H:i')); ?></p>
+                    <p><strong>Fecha:</strong> <?php echo e($order->date->translatedFormat('d M Y H:i')); ?></p>
                     <p><strong>Cliente:</strong> <?php echo e(Auth::user()->name); ?></p>
                     <p><strong>Correo electrónico:</strong> <?php echo e(Auth::user()->email); ?></p>
                 </div>
@@ -42,7 +42,7 @@
         ?>
 
         <div class="col-md-6">
-            <div class="card">
+            <div class="card h-100">
                 <div class="card-header bg-warning">
                     <strong>Total del pedido</strong>
                 </div>

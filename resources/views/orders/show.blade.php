@@ -26,7 +26,7 @@
                 </div>
                 <div class="card-body">
                     <p><strong>Pedido:</strong> #{{ $order->id }}</p>
-                    <p><strong>Fecha:</strong> {{ $order->created_at->translatedFormat('d M Y H:i') }}</p>
+                    <p><strong>Fecha:</strong> {{ $order->date->translatedFormat('d M Y H:i') }}</p>
                     <p><strong>Cliente:</strong> {{ Auth::user()->name }}</p>
                     <p><strong>Correo electrónico:</strong> {{ Auth::user()->email }}</p>
                 </div>

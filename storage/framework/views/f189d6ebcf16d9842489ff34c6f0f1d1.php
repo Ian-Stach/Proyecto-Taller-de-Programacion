@@ -8,18 +8,21 @@
 
     
     <?php if(isset($featuredCategory) && isset($featuredProducts) && $featuredProducts->isNotEmpty()): ?>
-        <section class="principal-featured" aria-label="Carrusel de dinosaurios destacados" data-principal-carousel>
+        <section class="principal-featured"
+                 aria-label="Carrusel de dinosaurios destacados"
+                 data-principal-carousel
+        >
             <div class="principal-featured-head">
                 
                 <h2 class="principal-featured-title">Mas disponibles ahora: <?php echo e($featuredCategory->name); ?></h2>
                 <div class="principal-carousel-controls">
                     
-                    <button type="button" class="principal-carousel-btn" data-carousel-prev aria-label="Mostrar dinosaurios anteriores">
-                        &lsaquo;
-                    </button>
-                    <button type="button" class="principal-carousel-btn" data-carousel-next aria-label="Mostrar mas dinosaurios">
-                        &rsaquo;
-                    </button>
+                    <button type="button" class="principal-carousel-btn"
+                            data-carousel-prev aria-label="Mostrar dinosaurios anteriores"
+                    >&lsaquo;</button>
+                    <button type="button" class="principal-carousel-btn"
+                            data-carousel-next aria-label="Mostrar mas dinosaurios"
+                    >&rsaquo;</button>
                 </div>
             </div>
 
@@ -28,11 +31,16 @@
                 <?php $__currentLoopData = $featuredProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <article class="principal-dino-card">
                         
-                        <a href="<?php echo e(route('products.show', $product)); ?>" class="principal-dino-link">
+                        <a href="<?php echo e(route('products.show', $product)); ?>"
+                           class="principal-dino-link"
+                        >
                             <div class="principal-dino-image-wrap">
                                 
                                 <?php if($product->image): ?>
-                                    <img src="<?php echo e($product->image); ?>" alt="<?php echo e($product->name); ?>" class="principal-dino-image">
+                                    <img src="<?php echo e($product->image); ?>"
+                                         alt="<?php echo e($product->name); ?>"
+                                         class="principal-dino-image"
+                                    >
                                 <?php else: ?>
                                     <div class="principal-dino-image principal-dino-image-placeholder">Sin imagen</div>
                                 <?php endif; ?>
@@ -50,7 +58,9 @@
     <?php endif; ?>
 
     
-    <a href="<?php echo e(route('products.index')); ?>" class="principal-cta">Ver dinosaurios disponibles</a>
+    <a href="<?php echo e(route('products.index')); ?>"
+       class="principal-cta"
+    >Ver dinosaurios disponibles</a>
 </div>
 
 

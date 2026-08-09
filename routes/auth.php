@@ -28,10 +28,13 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 // ============================================================================
@@ -45,11 +48,9 @@ Route::middleware('guest')->group(function () {
     /*
      * REGISTRO DE CUENTA
      *   GET  /register → muestra el formulario (RegisteredUserController@create)
-     *                    En este proyecto no se usa esta vista standalone porque
-     *                    el registro se hace en el modal #registerModal.
+     *                    En este proyecto no se usa esta vista standalone porque el registro se hace en el modal #registerModal.
      *   POST /register → procesa el registro   (RegisteredUserController@store)
-     *                    Valida nombre, email, contraseña y crea el User.
-     *                    Usa el error bag 'register' para devolver errores al modal.
+     *                    Valida nombre, email, contraseña y crea el User. Usa el error bag 'register' para devolver errores al modal.
      */
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
@@ -61,8 +62,7 @@ Route::middleware('guest')->group(function () {
      *   GET  /login → muestra el formulario (AuthenticatedSessionController@create)
      *                 No se usa standalone; el login está en el modal #loginModal.
      *   POST /login → procesa el login       (AuthenticatedSessionController@store)
-     *                 Valida email y contraseña via LoginRequest.
-     *                 Usa el error bag 'login' para devolver errores al modal.
+     *                 Valida email y contraseña via LoginRequest. Usa el error bag 'login' para devolver errores al modal.
      */
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');
@@ -85,13 +85,9 @@ Route::middleware('guest')->group(function () {
 
     /*
      * RESET DE CONTRASEÑA CON TOKEN
-     *   GET  /reset-password/{token} → muestra el formulario con el token de la URL
-     *                                   (NewPasswordController@create)
-     *                                   El usuario llega aquí desde el email de reset.
-     *   POST /reset-password         → valida el token y actualiza la contraseña
-     *                                   (NewPasswordController@store)
-     *                                   Al tener éxito, redirige a /login y flashea
-     *                                   'loginStatus' para mostrarlo en el modal de login.
+     *   GET  /reset-password/{token} → muestra el formulario con el token de la URL (NewPasswordController@create) El usuario llega aquí desde el email de reset.
+     *   POST /reset-password         → valida el token y actualiza la contraseña (NewPasswordController@store)
+     *                                   Al tener éxito, redirige a /login y flashea 'loginStatus' para mostrarlo en el modal de login.
      */
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
                 ->name('password.reset');
@@ -110,14 +106,10 @@ Route::middleware('auth')->group(function () {
 
     /*
      * CONFIRMACIÓN DE CONTRASEÑA
-     *   GET  /confirm-password → solicita la contraseña antes de una acción sensible
-     *                            (ConfirmablePasswordController@show)
-     *   POST /confirm-password → valida la contraseña introducida
-     *                            (ConfirmablePasswordController@store)
+     *   GET  /confirm-password → solicita la contraseña antes de una acción sensible (ConfirmablePasswordController@show)
+     *   POST /confirm-password → valida la contraseña introducida (ConfirmablePasswordController@store)
      *
-     *   Laravel usa esta ruta cuando el middleware 'password.confirm' protege
-     *   una acción (ej: eliminar cuenta). Si la contraseña no fue confirmada
-     *   recientemente, redirige aquí antes de continuar.
+     *   Laravel usa esta ruta cuando el middleware 'password.confirm' protege una acción (ej: eliminar cuenta). Si la contraseña no fue confirmada recientemente, redirige aquí antes de continuar.
      */
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
                 ->name('password.confirm');
@@ -126,21 +118,34 @@ Route::middleware('auth')->group(function () {
 
     /*
      * CAMBIO DE CONTRASEÑA DESDE EL PERFIL
-     *   PUT /password → actualiza la contraseña del usuario autenticado
-     *                   (PasswordController@update)
-     *                   Requiere la contraseña actual para confirmar la identidad.
-     *                   Se usa PUT (no PATCH) porque reemplaza el campo completo.
+     *   PUT /password → actualiza la contraseña del usuario autenticado (PasswordController@update)
+     *                   Requiere la contraseña actual para confirmar la identidad. Se usa PUT (no PATCH) porque reemplaza el campo completo.
      */
     Route::put('password', [PasswordController::class, 'update'])
                 ->name('password.update');
 
     /*
      * CIERRE DE SESIÓN
-     *   POST /logout → invalida la sesión y redirige a la home
-     *                  (AuthenticatedSessionController@destroy)
-     *                  Se usa POST (no GET) para prevenir que un enlace externo
-     *                  o una imagen pueda cerrar la sesión del usuario sin su intención.
+     *   POST /logout → invalida la sesión y redirige a la home (AuthenticatedSessionController@destroy)
+     *                  Se usa POST (no GET) para prevenir que un enlace externo o una imagen pueda cerrar la sesión del usuario sin su intención.
      */
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+
+    /*
+     * VERIFICACIÓN DE EMAIL
+     *   GET  /verify-email             → avisa al usuario que debe verificar su correo (EmailVerificationPromptController) Se muestra cuando accede a una ruta 'verified' sin haber confirmado.
+     *   GET  /verify-email/{id}/{hash} → procesa el enlace del email y marca el correo como verificado (VerifyEmailController) Redirige a /user?verified=1 al tener éxito.
+     *   POST /email/verification-notification → reenvía el email de verificación (EmailVerificationNotificationController) Limitado a 6 envíos por minuto (throttle).
+     */
+    Route::get('verify-email', EmailVerificationPromptController::class)
+                ->name('verification.notice');
+
+    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+                ->middleware(['signed', 'throttle:6,1'])
+                ->name('verification.verify');
+
+    Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+                ->middleware('throttle:6,1')
+                ->name('verification.send');
 });

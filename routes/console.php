@@ -150,7 +150,7 @@ Artisan::command('store:orders', function () {
         $itemsCount = $order->orderItems->count();
         $this->line("Orden #{$order->id} | Usuario: {$order->user->name}");
         $this->line("   Items: {$itemsCount} | Total: \$" . number_format($order->total_price, 2));
-        $this->line("   Fecha: {$order->created_at}");
+        $this->line("   Fecha: {$order->date}");
         $this->line('');
     }
 })->purpose('List all orders');

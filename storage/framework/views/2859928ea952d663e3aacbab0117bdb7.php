@@ -1,21 +1,19 @@
 
 
 
+
 <?php
     $serverModalId = null;
 
-    if ($errors->login->isNotEmpty()) {
-        // Hay errores de validación del formulario de login
+    if ($errors->login->isNotEmpty()) {                                                       // Hay errores de validación del formulario de login
         $serverModalId = 'loginModal';
-    } elseif ($errors->register->isNotEmpty()) {
-        // Hay errores de validación del formulario de registro
+    } elseif ($errors->register->isNotEmpty()) {                                              // Hay errores de validación del formulario de registro
         $serverModalId = 'registerModal';
-    } elseif ($errors->forgotPassword->isNotEmpty() || session('forgotPasswordStatus')) {
-        // Hay errores en el formulario de recuperación, o bien el enlace ya
-        // se envió (sesión 'forgotPasswordStatus') y hay que mostrar el éxito.
+    } elseif ($errors->forgotPassword->isNotEmpty() || session('forgotPasswordStatus')) {     // Hay errores en el formulario de recuperación, o bien el enlace ya se envió (sesión 'forgotPasswordStatus') y hay que mostrar el éxito.
         $serverModalId = 'forgotPasswordModal';
     }
 ?>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

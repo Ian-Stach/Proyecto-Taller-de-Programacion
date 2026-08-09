@@ -11,71 +11,65 @@ use Illuminate\Support\Collection;
 /*
  * ProductController
  * ------------------
- * Controlador principal del cat??logo de productos.
+ * Controlador principal del catálogo de productos.
  * Maneja el listado con filtros facetados, el detalle de un producto,
- * el endpoint de sugerencias para el buscador del header, y tres m??todos
- * protegidos que encapsulan la l??gica de filtrado reutilizable.
+ * el endpoint de sugerencias para el buscador del header, y tres métodos
+ * protegidos que encapsulan la lógica de filtrado reutilizable.
  *
  * Rutas:
- *   GET /products              ??? index()       ??? cat??logo con filtros y paginaci??n
- *   GET /products/suggestions  ??? suggestions() ??? JSON para autocompletado del header
- *   GET /products/{product}    ??? show()        ??? detalle de producto
+ *   GET /products              -> index()       ??? catalogo con filtros y paginacion
+ *   GET /products/suggestions  -> suggestions() ??? JSON para autocompletado del header
+ *   GET /products/{product}    -> show()        ??? detalle de producto
  *
  * IMPORTANTE: /products/suggestions debe definirse ANTES de /products/{product}
- * en routes/web.php, o Laravel interpretar??a "suggestions" como el ID del producto.
+ * en routes/web.php, o Laravel interpretaria "suggestions" como el ID del producto.
  *
- * M??todos protegidos (l??gica interna):
- *   buildFilterFacets()         ??? construye el array de facetas disponibles
- *   extractSelectedFacetValues() ??? sanitiza y valida los valores seleccionados del request
- *   applyFacetFilter()          ??? aplica cada tipo de filtro al query Builder
+ * Métodos protegidos (lógica interna):
+ *   buildFilterFacets()         -> construye el array de facetas disponibles
+ *   extractSelectedFacetValues() -> sanitiza y valida los valores seleccionados del request
+ *   applyFacetFilter()          -> aplica cada tipo de filtro al query Builder
  */
-class ProductController extends Controller
-{
+class ProductController extends Controller {
     /**
      * Listar todos los productos
      * GET /products
      *
      * Construye un query Builder progresivo al que se le van encadenando condiciones:
      *
-     *   1. buildFilterFacets() genera el array de facetas desde las categor??as y los
+     *   1. buildFilterFacets() genera el array de facetas desde las categorías y los
      *      atributos del modelo Product. Cada faceta describe su etiqueta, sus opciones
-     *      v??lidas y c??mo se aplica al query.
+     *      válidas y cómo se aplica al query.
      *
      *   2. Por cada faceta, extractSelectedFacetValues() lee el request y devuelve
-     *      solo los valores v??lidos (whitelist). Los valores inv??lidos son silenciosamente
+     *      solo los valores válidos (whitelist). Los valores inválidos son silenciosamente
      *      descartados. Si hay valores seleccionados, applyFacetFilter() los aplica.
      *
-     *   3. El bloque de b??squeda agrega un WHERE agrupado (name LIKE o description LIKE)
-     *      para que ambas condiciones se eval??en como una unidad OR dentro del AND global.
+     *   3. El bloque de búsqueda agrega un WHERE agrupado (name LIKE o description LIKE)
+     *      para que ambas condiciones se evalúen como una unidad OR dentro del AND global.
      *
-     *   4. El sort tiene una whitelist expl??cita; si el valor recibido no est?? en
+     *   4. El sort tiene una whitelist explícita; si el valor recibido no está en
      *      $allowedSorts, se normaliza a 'latest' para evitar inyecciones en el ORDER BY.
      *
      *   5. Se pagina a 12 resultados. paginate() ejecuta dos queries: una de COUNT para
-     *      el total y otra con LIMIT/OFFSET para los resultados de la p??gina.
+     *      el total y otra con LIMIT/OFFSET para los resultados de la página.
      *
-     *   6. Si la petici??n es AJAX ($request->ajax()), devuelve solo el partial
+     *   6. Si la petición es AJAX ($request->ajax()), devuelve solo el partial
      *      results-content.blade.php (la columna de resultados sin el sidebar).
-     *      Esto permite actualizar el cat??logo sin recargar la p??gina completa.
+     *      Esto permite actualizar el catálogo sin recargar la página completa.
      *      Si no es AJAX, devuelve la vista completa products.index.
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         $query = Product::where('active', true)->with('categories');
         $categories = Category::orderBy('name')->get();
         $filterFacets = $this->buildFilterFacets($categories);
 
         foreach ($filterFacets as $facetKey => $facet) {
             $selectedValues = $this->extractSelectedFacetValues($request, $facet);
-
             $filterFacets[$facetKey]['selected'] = $selectedValues;
             $filterFacets[$facetKey]['selected_count'] = count($selectedValues);
-            // collapse_id se usa como id del elemento Bootstrap Collapse en la vista
-            $filterFacets[$facetKey]['collapse_id'] = $facetKey . 'Dropdown';
-            // input_name agrega [] al final para que PHP reciba los checkboxes como array
-            $filterFacets[$facetKey]['input_name'] = $facet['request_key'] . '[]';
-            // option_map permite lookup O(1) de value ??? label para los chips de filtros activos
-            $filterFacets[$facetKey]['option_map'] = collect($facet['options'])
+            $filterFacets[$facetKey]['collapse_id'] = $facetKey . 'Dropdown';           // collapse_id se usa como id del elemento Bootstrap Collapse en la vista
+            $filterFacets[$facetKey]['input_name'] = $facet['request_key'] . '[]';      // input_name agrega [] al final para que PHP reciba los checkboxes como array
+            $filterFacets[$facetKey]['option_map'] = collect($facet['options'])         // option_map permite lookup O(1) de value ??? label para los chips de filtros activos
                 ->mapWithKeys(fn (array $option) => [$option['value'] => $option['label']])
                 ->all();
 
@@ -85,7 +79,7 @@ class ProductController extends Controller
         }
 
         if ($request->filled('search')) {
-            // Envuelve en funci??n an??nima para agrupar el OR dentro del AND global del query
+            // Envuelve en función anónima para agrupar el OR dentro del AND global del query
             $searchTerm = '%' . $request->search . '%';
             $query->where(function($q) use ($searchTerm) {
                 $q->where('name', 'like', $searchTerm)
@@ -129,7 +123,7 @@ class ProductController extends Controller
             'currentSort' => $sort,
         ];
 
-        // Respuesta parcial para peticiones AJAX (actualizaci??n as??ncrona del cat??logo)
+        // Respuesta parcial para peticiones AJAX (actualización asíncrona del catálogo)
         if ($request->ajax()) {
             return view('products.partials.results-content', $viewData);
         }
@@ -141,17 +135,16 @@ class ProductController extends Controller
      * Mostrar detalle de un producto
      * GET /products/{product}
      *
-     * Si el producto existe pero tiene active=false se devuelve 404, comport??ndose
-     * igual que si no existiera (evita revelar que el producto existe pero est?? inactivo).
+     * Si el producto existe pero tiene active=false se devuelve 404, comportándose
+     * igual que si no existiera (evita revelar que el producto existe pero está inactivo).
      *
      * Productos relacionados: busca hasta 4 productos activos que compartan al menos
-     * una categor??a con el producto actual, excluyendo el producto mismo.
-     * Si el producto no tiene categor??as ($relatedCategoryIds === []), el whereHas se
-     * omite para no devolver un resultado vac??o forzado; en ese caso, devuelve otros
-     * productos activos sin filtro de categor??a.
+     * una categoría con el producto actual, excluyendo el producto mismo.
+     * Si el producto no tiene categorías ($relatedCategoryIds === []), el whereHas se
+     * omite para no devolver un resultado vacío forzado; en ese caso, devuelve otros
+     * productos activos sin filtro de categoría.
      */
-    public function show(Product $product)
-    {
+    public function show(Product $product) {
         // Verificar si es activo
         if (!$product->active) {
             abort(404);
@@ -185,16 +178,16 @@ class ProductController extends Controller
      * GET /products/suggestions?q=...
      *
      * Endpoint JSON llamado por header-search-suggest.js mientras el usuario escribe.
-     * Devuelve hasta 8 productos cuyo nombre empieza por el t??rmino buscado.
+     * Devuelve hasta 8 productos cuyo nombre empieza por el término buscado.
      *
-     * Decisiones de dise??o:
-     *   ??? 'name LIKE t??rmino%' (prefijo) en vez de '%t??rmino%' (contiene):
-     *     es m??s r??pido con ??ndice en la columna 'name' y produce sugerencias
-     *     m??s relevantes (el usuario est?? completando lo que est?? escribiendo).
+     * Decisiones de diseño:
+     *   ??? 'name LIKE término%' (prefijo) en vez de '%término%' (contiene):
+     *     es más rápido con índice en la columna 'name' y produce sugerencias
+     *     más relevantes (el usuario está completando lo que está escribiendo).
      *   ??? get(['id', 'name', 'price', 'image']): solo las columnas necesarias,
      *     evita traer description, stock, etc. que no se muestran en el dropdown.
      *   ??? mb_strlen() en vez de strlen() para contar correctamente caracteres UTF-8
-     *     (tildes, ??, etc. son 2 bytes en strlen pero 1 car??cter en mb_strlen).
+     *     (tildes, ñ, etc. son 2 bytes en strlen pero 1 carácter en mb_strlen).
      *   ??? number_format((float) $product->price, 2): castea a float antes de formatear
      *     para evitar errores si price llega como string desde la BD.
      *   ??? ->values() al final reindexia el array antes de serializarlo a JSON,
@@ -231,15 +224,15 @@ class ProductController extends Controller
     }
 
     /**
-     * Construye el array de facetas disponibles para el cat??logo.
+     * Construye el array de facetas disponibles para el catálogo.
      *
      * Fuentes de facetas:
-     *   1. Categor??as: se construye a partir de $categories (ya consultadas en index())
-     *      para evitar una segunda query. Cada categor??a se convierte en una option
+     *   1. Categorias: se construye a partir de $categories (ya consultadas en index())
+     *      para evitar una segunda query. Cada categoria se convierte en una option
      *      con value=(string)id y label=name.
      *
-     *   2. Product::catalogAttributeFacets(): m??todo est??tico del modelo que devuelve
-     *      las facetas de atributos (per??odo geol??gico, dieta, tipo de locomoci??n, etc.)
+     *   2. Product::catalogAttributeFacets(): metodo estatico del modelo que devuelve
+     *      las facetas de atributos (periodo geologico, dieta, tipo de locomocion, etc.)
      *      definidas como constantes en el modelo. Cada faceta tiene filter_type y options.
      *
      * El array resultante tiene la forma:
@@ -251,8 +244,7 @@ class ProductController extends Controller
      *
      * Este array es el mismo que se pasa a index() para armar los filtros del sidebar.
      */
-    protected function buildFilterFacets(Collection $categories): array
-    {
+    protected function buildFilterFacets(Collection $categories): array {
         $facets = [
             'categories' => [
                 'label' => 'Categorias',
@@ -295,19 +287,19 @@ class ProductController extends Controller
     /**
      * Extrae y sanitiza los valores seleccionados de una faceta desde el request.
      *
-     * Proceso de sanitizaci??n:
-     *   1. Lee el input como array (puede estar vac??o si no hay checkboxes marcados).
-     *   2. Filtra valores vac??os con filled() para descartar cadenas vac??as y null.
-     *   3. Castea todos los valores a string para comparaci??n uniforme.
+     * Proceso de sanitización:
+     *   1. Lee el input como array (puede estar vacío si no hay checkboxes marcados).
+     *   2. Filtra valores vacíos con filled() para descartar cadenas vacías y null.
+     *   3. Castea todos los valores a string para comparación uniforme.
      *   4. Filtra contra la whitelist de valores permitidos (in_array estricto).
      *   5. Elimina duplicados con unique() y reindexia con values().
      *
      * Soporte legacy: si la faceta tiene 'legacy_request_key' y el request trae ese
-     * par??metro (p. ej. ?category_id=3 de un enlace antiguo), se intenta recuperar
+     * parámetro (p. ej. ?category_id=3 de un enlace antiguo), se intenta recuperar
      * ese valor como si hubiera sido enviado por el filtro nuevo.
      *
-     * La whitelist es cr??tica para seguridad: evita que un usuario pueda inyectar
-     * valores arbitrarios en el WHERE de la query a trav??s de la URL.
+     * La whitelist es crítica para seguridad: evita que un usuario pueda inyectar
+     * valores arbitrarios en el WHERE de la query a través de la URL.
      */
     protected function extractSelectedFacetValues(Request $request, array $facet): array
     {
@@ -335,27 +327,27 @@ class ProductController extends Controller
     }
 
     /**
-     * Aplica el filtro de una faceta al query Builder seg??n su filter_type.
+     * Aplica el filtro de una faceta al query Builder según su filter_type.
      *
      * Tipos de filtro soportados:
      *
      *   'categories':
-     *     Filtra por relaci??n many-to-many. Usa whereHas() para hacer un EXISTS subquery
+     *     Filtra por relación many-to-many. Usa whereHas() para hacer un EXISTS subquery
      *     en la tabla pivot. Castea a int con array_map('intval', ...) para evitar
      *     comparaciones de string contra id entero.
      *
      *   'height_range':
      *     Faceta especial para altura de dinosaurios. Cada valor seleccionado es una clave
      *     de rango (p. ej. 'small', 'medium', 'large'). Product::heightRangeDefinition()
-     *     devuelve los l??mites {min, max} para cada clave.
+     *     devuelve los límites {min, max} para cada clave.
      *     Se agrupan con orWhere() porque el usuario quiere ver productos en CUALQUIERA
-     *     de los rangos seleccionados (uni??n, no intersecci??n).
-     *     Si heightRangeDefinition() devuelve null para una clave inv??lida, se omite.
+     *     de los rangos seleccionados (unión, no intersección).
+     *     Si heightRangeDefinition() devuelve null para una clave inválida, se omite.
      *
      *   'column' (default):
      *     Filtro simple whereIn sobre una columna de la tabla products.
-     *     $facet['column'] especifica qu?? columna usar (p. ej. 'diet', 'period').
-     *     Si column est?? vac??o, no aplica ning??n filtro (evita errores silenciosos).
+     *     $facet['column'] especifica qué columna usar (p. ej. 'diet', 'period').
+     *     Si column está vacío, no aplica ningún filtro (evita errores silenciosos).
      */
     protected function applyFacetFilter(Builder $query, array $facet, array $selectedValues): void
     {

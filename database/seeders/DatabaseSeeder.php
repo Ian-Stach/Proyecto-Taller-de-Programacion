@@ -82,6 +82,7 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'remember_token' => Str::random(10),
                 'email_verified_at' => now(),
+                'is_admin' => true,
             ]
         );
 
@@ -396,10 +397,6 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => $categoryName,
                 'parent_id' => $parentCategory?->id,
-            ],
-            [
-                'description' => $categoryData['description'] ?? null,
-                'image' => $categoryData['image'] ?? null,
             ]
         );
 

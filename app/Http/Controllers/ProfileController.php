@@ -63,10 +63,12 @@ class ProfileController extends Controller
         $favorites = null;
 
         if ($currentPanel === 'orders') {
+            $orderDateColumn = \App\Models\Order::dateColumn();
+
             $ordersQuery = $request->user()
                 ->orders()
                 ->with(['orderItems.product'])
-                ->orderByDesc('created_at');
+                ->orderByDesc($orderDateColumn);
 
             if ($ordersSearch !== '') {
                 $ordersQuery->where(function ($query) use ($ordersSearch) {
@@ -107,14 +109,14 @@ class ProfileController extends Controller
             'ordersSearch' => $ordersSearch,
             'favoritesSearch' => $favoritesSearch,
             'statusLabels' => [
-                'completed' => 'Completado',
-                'pending'   => 'Pendiente',
-                'cancelled' => 'Cancelado',
+                'completado' => 'Completado',
+                'pendiente'  => 'Pendiente',
+                'cancelado'  => 'Cancelado',
             ],
             'statusClasses' => [
-                'completed' => 'text-success',
-                'pending'   => 'text-warning-emphasis',
-                'cancelled' => 'text-danger',
+                'completado' => 'text-success',
+                'pendiente'  => 'text-warning-emphasis',
+                'cancelado'  => 'text-danger',
             ],
         ]);
     }
@@ -146,10 +148,27 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        $request->user()->save();
+        // 1. actualizar nombr ey mail (validacion el FormRequest)
+        $user->fill($request->validated());
 
+        // 2. Si viene una foto, guardarla; si el usuario la eliminó, borrarla
+        if ($request->hasFile('photo')) {
+            if ($user->photo && \Storage::disk('public')->exists($user->photo)) {
+                \Storage::disk('public')->delete($user->photo);
+            }
+            $path = $request->file('photo')->store('profile_photos', 'public');
+            $user->photo = $path;
+        } elseif ($request->input('remove_photo') === '1') {
+            if ($user->photo && \Storage::disk('public')->exists($user->photo)) {
+                \Storage::disk('public')->delete($user->photo);
+            }
+            $user->photo = null;
+        }
+
+        // 3. Guardar cambios
+        $user->save();
         return Redirect::back()->with('status', 'profile-updated');
     }
 
@@ -178,7 +197,19 @@ class ProfileController extends Controller
 
         Auth::logout();
 
-        $user->delete();
+        // Anonimizar los datos personales antes del soft delete.
+        // El registro queda en BD (conserva el historial de órdenes) pero sin PII.
+        // El email único se reemplaza por un valor con el ID para liberar el slot
+        // si el usuario quiere registrarse de nuevo con el mismo email en el futuro.
+        $user->forceFill([
+            'name'              => 'Usuario eliminado',
+            'email'             => 'deleted_' . $user->id . '@removed.invalid',
+            'password'          => '!', // valor imposible: bloquea el login
+            'email_verified_at' => null,
+            'remember_token'    => null,
+        ])->save();
+
+        $user->delete(); // soft delete: rellena deleted_at, no borra el registro
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

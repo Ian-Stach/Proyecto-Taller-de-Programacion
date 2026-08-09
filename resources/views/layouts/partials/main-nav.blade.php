@@ -24,8 +24,7 @@
     <div class="container-fluid">
         <div class="d-flex gap-3 align-items-center justify-content-center justify-content-evenly w-100">
             {{-- Página de inicio (hero + carrusel de categoría destacada) --}}
-            <a class="nav-link"
-               href="{{ route('home') }}"
+            <a class="nav-link" href="{{ route('home') }}"
             >Inicio</a>
 
             {{-- Catálogo completo de productos con filtros --}}

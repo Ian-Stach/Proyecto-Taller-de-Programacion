@@ -30,7 +30,7 @@
                                 <strong>#{{ $order->id }}</strong>
                             </td>
                             <td>
-                                {{ $order->created_at->translatedFormat('d M Y H:i') }}
+                                {{ $order->date->translatedFormat('d M Y H:i') }}
                             </td>
                             <td>
                                 {{ $order->orderItems->count() }} artículo(s)

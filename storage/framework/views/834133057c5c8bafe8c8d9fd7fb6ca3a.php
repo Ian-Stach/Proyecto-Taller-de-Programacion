@@ -1,54 +1,31 @@
 
+
 <!-- MODAL DE REGISTRO -->
-<div class="modal fade auth-modal"
-     id="registerModal"
-     tabindex="-1"
-     aria-labelledby="registerModalLabel"
-     aria-hidden="true"
->
+<div class="modal fade auth-modal" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-
-            
+            <!-- Cabecera del modal con fondo amarillo de marca -->
             <div class="modal-header bg-warning">
-                <h5 class="modal-title"
-                    id="registerModalLabel"
-                >Crear cuenta</h5>
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Cerrar"
-                ></button>
+                <h5 class="modal-title" id="registerModalLabel">Crear cuenta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
 
-            
-            <form method="POST"
-                  action="<?php echo e(route('register')); ?>"
-            >
+            <!-- El formulario envuelve body y footer del modal. <?php echo csrf_field(); ?> → token de Laravel obligatorio para cualquier formulario POST. -->
+            <form method="POST" action="<?php echo e(route('register')); ?>">
                 <?php echo csrf_field(); ?>
                 <div class="modal-body">
-
-                    
+                    <!-- CAMPO: nombre -->
                     <div class="mb-3">
-                        <label for="register-name"
-                               class="form-label"
-                        >Nombre</label>
-                        
-                        <input id="register-name"
-                               type="text"
-                               name="name"
-                               value="<?php echo e(old('name')); ?>"
-                               class="form-control <?php $__errorArgs = ['name', 'register'];
+                        <label for="register-name" class="form-label">Nombre</label>
+                        <!-- old('name') repopula el campo si el formulario falla. @error('name', 'register') agrega is-invalid si hay error en el bag 'register', mostrando el borde rojo de Bootstrap. -->
+                        <input id="register-name" type="text" name="name" value="<?php echo e(old('name')); ?>" class="form-control <?php $__errorArgs = ['name', 'register'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                               required
-                               autocomplete="name"
-                        >
+unset($__errorArgs, $__bag); ?>" required autocomplete="name">
                         <?php $__errorArgs = ['name', 'register'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -61,26 +38,17 @@ endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    
+                    <!-- CAMPO: email -->
                     <div class="mb-3">
-                        <label for="register-email"
-                               class="form-label"
-                        >Email</label>
-                        <input id="register-email"
-                               type="email"
-                               name="email"
-                               value="<?php echo e(old('email')); ?>"
-                               class="form-control <?php $__errorArgs = ['email', 'register'];
+                        <label for="register-email" class="form-label">Email</label>
+                        <input id="register-email" type="email" name="email" value="<?php echo e(old('email')); ?>" class="form-control <?php $__errorArgs = ['email', 'register'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                               required
-                               autocomplete="email"
-                        >
+unset($__errorArgs, $__bag); ?>" required autocomplete="email">
                         <?php $__errorArgs = ['email', 'register'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -93,26 +61,18 @@ endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    
+                    <!-- CAMPO: contraseña -->
                     <div class="mb-3">
-                        <label for="register-password"
-                               class="form-label"
-                        >Contraseña</label>
-                        
-                        <input id="register-password"
-                               type="password"
-                               name="password"
-                               class="form-control <?php $__errorArgs = ['password', 'register'];
+                        <label for="register-password" class="form-label">Contraseña</label>
+                        <!-- autocomplete="new-password" le indica al navegador que es una contraseña nueva (no la del login), para evitar que el gestor de contraseñas rellene el campo del login aquí. -->
+                        <input id="register-password" type="password" name="password" class="form-control <?php $__errorArgs = ['password', 'register'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                               required
-                               autocomplete="new-password"
-                        >
+unset($__errorArgs, $__bag); ?>" required autocomplete="new-password">
                         <?php $__errorArgs = ['password', 'register'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -125,50 +85,27 @@ endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    
+                    <!-- CAMPO: confirmación de contraseña -->
                     <div class="mb-3">
-                        <label for="register-password-confirmation"
-                               class="form-label"
-                        >Confirmar contraseña</label>
-                        
-                        <input id="register-password-confirmation"
-                               type="password"
-                               name="password_confirmation"
-                               class="form-control <?php $__errorArgs = ['password_confirmation', 'register'];
+                        <label for="register-password-confirmation" class="form-label">Confirmar contraseña</label>
+                        <!-- name="password_confirmation" → Laravel espera exactamente este nombre para validar la regla 'confirmed' en el campo
+                             'password'. No genera errores propios; si no coincide, el error aparece en el campo 'password'. -->
+                        <input id="register-password-confirmation" type="password" name="password_confirmation" class="form-control <?php $__errorArgs = ['password_confirmation', 'register'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                               required
-                               autocomplete="new-password"
-                        >
-                        <?php $__errorArgs = ['password_confirmation', 'register'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                            <div class="invalid-feedback"><?php echo e($message); ?></div>
-                        <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+unset($__errorArgs, $__bag); ?>" required autocomplete="new-password">
+                        
                     </div>
                 </div>
 
-                
+                <!-- Pie del modal: botones de acción -->
                 <div class="modal-footer">
-                    
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                    >Cerrar</button>
-                    
-                    <button type="submit"
-                            class="btn btn-warning"
-                    >Registrarse</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>     <!-- Cierra el modal sin enviar el formulario -->
+                    <button type="submit" class="btn btn-warning">Registrarse</button>     <!-- Envía el formulario POST a /register -->
                 </div>
             </form>
         </div>

@@ -1,9 +1,17 @@
 {{--
     PARTIAL: auth/partials/modal-open-script
-    ─────────────────────────────────────────────────────────────────────────────
-    Script unificado que decide cuál modal de autenticación abrir automáticamente
-    al cargar la página. Reemplaza tres scripts separados (uno por modal) que
-    existían antes de la refactorización.
+    ---------------------------------------------------------------------------------------------------------------------------------------------------------
+    Script unificado que decide cuál modal de autenticación abrir automáticamente al cargar la página.
+
+    Razones para abrir un modal:
+      1. Errores de validación en el servidor (ej: datos incorrectos al enviar el formulario).
+      2. Parámetro URL ?authModal= (ej: un enlace directo al registro desde un email).
+
+    Lógica de decisión:
+      El script se ejecuta al cargar la página (DOMContentLoaded) y evalúa ambas fuentes de información (servidor y URL) para determinar qué modal abrir.
+      El servidor tiene prioridad sobre la URL, ya que refleja el estado real de validación tras un intento de envío.
+
+    Flujo detallado:
 
     FASE 1 — Decisión en el servidor (PHP/Blade):
       Se evalúan los error bags antes de renderizar la página.
@@ -20,18 +28,17 @@
       Fuente A — Servidor: @js($serverModalId) pasa el valor PHP a JS de forma segura.
         @js() escapa el valor correctamente para evitar XSS (no usar {!! !!} para esto).
 
-      Fuente B — URL: el parámetro ?authModal= permite abrir un modal desde un enlace
-        externo (ej: un email con un link directo al registro).
+      Fuente B — URL: el parámetro ?authModal= permite abrir un modal desde un enlace externo (ej: un email con un link directo al registro).
         modalQueryMap mapea las claves legibles de la URL a los IDs reales del modal.
 
       Prioridad: el servidor tiene precedencia sobre la URL.
         const modalId = @js($serverModalId) || queryModalId;
 
-      Limpieza de URL: si el modal se abrió por ?authModal=, se borra ese parámetro
-        de la barra de dirección con history.replaceState sin recargar la página,
+      Limpieza de URL: si el modal se abrió por ?authModal=, se borra ese parámetro de la barra de dirección con history.replaceState sin recargar la página,
         para que el usuario no vea el parámetro ni lo comparta accidentalmente.
-    ─────────────────────────────────────────────────────────────────────────────
+    ---------------------------------------------------------------------------------------------------------------------------------------------------------
 --}}
+
 
 {{--
     BLOQUE PHP: determina en el servidor qué modal debe abrirse.
@@ -40,26 +47,22 @@
 @php
     $serverModalId = null;
 
-    if ($errors->login->isNotEmpty()) {
-        // Hay errores de validación del formulario de login
+    if ($errors->login->isNotEmpty()) {                                                       // Hay errores de validación del formulario de login
         $serverModalId = 'loginModal';
-    } elseif ($errors->register->isNotEmpty()) {
-        // Hay errores de validación del formulario de registro
+    } elseif ($errors->register->isNotEmpty()) {                                              // Hay errores de validación del formulario de registro
         $serverModalId = 'registerModal';
-    } elseif ($errors->forgotPassword->isNotEmpty() || session('forgotPasswordStatus')) {
-        // Hay errores en el formulario de recuperación, o bien el enlace ya
-        // se envió (sesión 'forgotPasswordStatus') y hay que mostrar el éxito.
+    } elseif ($errors->forgotPassword->isNotEmpty() || session('forgotPasswordStatus')) {     // Hay errores en el formulario de recuperación, o bien el enlace ya se envió (sesión 'forgotPasswordStatus') y hay que mostrar el éxito.
         $serverModalId = 'forgotPasswordModal';
     }
 @endphp
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
         {{--
             Mapa de claves URL → IDs de modal.
-            Permite usar URLs como: /home?authModal=login
-            en lugar de exponer los IDs internos de Bootstrap en los enlaces.
+            Permite usar URLs como: /home?authModal=login en lugar de exponer los IDs internos de Bootstrap en los enlaces.
         --}}
         const modalQueryMap = {
             login: 'loginModal',

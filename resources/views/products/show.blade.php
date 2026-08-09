@@ -59,16 +59,12 @@
                 <div class="card-body p-0">
                     @if($product->image)
                         <div class="products-image-wrapper product-detail-image-wrapper rounded overflow-hidden">
-                            <img src="{{ $product->image }}"
-                                 class="card-img-top product-detail-image"
-                                 alt="{{ $product->name }}"
-                                 {{--
+                            {{--
                                      onerror: fallback JS puro si la URL de imagen está rota.
                                      Oculta el <img> y muestra el placeholder hermano sin
                                      necesitar una segunda request al servidor.
                                  --}}
-                                 onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');"
-                            >
+                            <img src="{{ asset($product->image) }}" class="card-img-top product-detail-image" alt="{{ $product->name }}" onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
                             <div class="bg-light products-image-placeholder product-detail-image-placeholder d-none rounded">
                                 <span class="text-muted">Sin imagen</span>
                             </div>
@@ -97,21 +93,14 @@
                     El SVG usa fill="currentColor" para heredar el color del botón por CSS.
                 --}}
                 @auth
-                    <form action="{{ $isFavorite ? route('favorites.remove', $product) : route('favorites.add', $product) }}"
-                          method="POST"
-                          class="product-detail-fav-form"
-                    >
+                    <form action="{{ $isFavorite ? route('favorites.remove', $product) : route('favorites.add', $product) }}" method="POST" class="product-detail-fav-form">
                         @csrf
 
                         @if($isFavorite)
                             @method('DELETE')
                         @endif
 
-                        <button type="submit"
-                                class="product-detail-fav-btn {{ $isFavorite ? 'is-active' : '' }}"
-                                aria-label="{{ $isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}"
-                                title="{{ $isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}"
-                        >
+                        <button type="submit" class="product-detail-fav-btn {{ $isFavorite ? 'is-active' : '' }}" aria-label="{{ $isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}" title="{{ $isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="currentColor">
                                 <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
                             </svg>
@@ -186,9 +175,7 @@
             --}}
             <div class="mb-4">
                 <strong>Stock:</strong>
-                <span class="badge @if($product->stock > 5) bg-success @elseif($product->stock > 0) bg-warning text-dark @else bg-danger @endif">
-                    {{ $product->stock }} unidades
-                </span>
+                <span class="badge @if($product->stock > 5) bg-success @elseif($product->stock > 0) bg-warning text-dark @else bg-danger @endif">{{ $product->stock }} unidades</span>
             </div>
 
             {{--
@@ -206,52 +193,29 @@
             --}}
             @if($product->stock > 0)
                 @auth
-                    <form action="{{ route('cart.add', $product) }}"
-                          method="POST"
-                          class="mb-4 cart-add-form"
-                    >
+                    <form action="{{ route('cart.add', $product) }}" method="POST" class="mb-4 cart-add-form">
                         @csrf
 
                         <div class="mb-3">
-                            <label for="quantity"
-                                   class="form-label"
-                            >Cantidad:
-                            </label>
+                            <label for="quantity" class="form-label">Cantidad:</label>
                             {{-- max limita el input en el cliente; el servidor también valida --}}
-                            <input type="number"
-                                   name="quantity"
-                                   id="quantity"
-                                   value="1"
-                                   min="1"
-                                   max="{{ $product->stock }}"
-                                   class="form-control product-quantity-input"
-                            >
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ $product->stock }}" class="form-control product-quantity-input">
                         </div>
 
-                        <button type="submit"
-                                class="btn btn-warning btn-lg me-2"
-                        >🛒 Añadir al carrito
+                        <button type="submit" class="btn btn-warning btn-lg me-2">🛒 Añadir al carrito
                         </button>
                     </form>
                 @else
                     {{-- Guest: el botón abre el modal de login (no redirige a una página) --}}
-                    <button type="button"
-                            class="btn btn-warning btn-lg"
-                            data-bs-toggle="modal"
-                            data-bs-target="#loginModal"
-                    >Iniciar sesión para comprar</button>
+                    <button type="button" class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión para comprar</button>
                 @endauth
             @else
-                <div class="alert alert-danger">
-                    Sin stock
-                </div>
+                <div class="alert alert-danger">Sin stock</div>
             @endif
 
             <hr>
 
-            <a href="{{ route('products.index') }}" class="btn btn-secondary">
-                ← Volver a productos
-            </a>
+            <a href="{{ route('products.index') }}" class="btn btn-secondary">← Volver a productos</a>
         </div>
     </div>
 
@@ -274,9 +238,7 @@
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ $related->name }}</h5>
                             <p class="fs-5 fw-bold text-warning mt-auto">${{ number_format($related->price, 2) }}</p>
-                            <a class="btn btn-sm btn-info w-100"
-                               href="{{ route('products.show', $related) }}"
-                            >Detalles</a>
+                            <a class="btn btn-sm btn-info w-100" href="{{ route('products.show', $related) }}">Detalles</a>
                         </div>
                     </div>
                 </div>
